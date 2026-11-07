@@ -1,266 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Z-bus Modification Portal</title>
-<style>
-:root{--bg:#f1f6fb;--panel:#ffffff;--ink:#1b2a3a;--mute:#566778;--line:#cfdbe6;--blue:#2563eb;--green:#15803d;--orange:#d97706;--red:#c62828;--purple:#7c3aed;--chg:#fde68a}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{background:#1e40af;color:#fff;padding:24px max(24px,calc((100% - 1232px)/2)) 20px}
-h1{font:600 28px/1.2 Georgia,"Iowan Old Style",serif;margin:0 0 6px}
-header p{margin:0;color:#dbeafe;max-width:68ch}
-main{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:20px;max-width:1280px;margin:auto;padding:20px 24px 48px}
-@media(max-width:900px){main{grid-template-columns:1fr}}
-section{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--blue);border-radius:6px;padding:16px 18px;margin-bottom:16px}
-main>div:first-child>section:nth-child(1){border-top-color:var(--blue)}
-main>div:first-child>section:nth-child(2){border-top-color:var(--orange)}
-main>div:last-child>section:nth-child(1){border-top-color:var(--green)}
-main>div:last-child>section:nth-child(2){border-top-color:var(--purple)}
-h2{font:600 18px Georgia,serif;margin:0 0 10px}
-label{display:block;font-size:14px;color:var(--mute);margin:10px 0 3px}
-input,select,textarea,button{font:inherit;color:inherit}
-input,select,textarea{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:4px;background:#fff}
-textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;min-height:90px}
-input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
-button{padding:7px 14px;border:1px solid var(--blue);background:var(--blue);color:#fff;border-radius:4px;cursor:pointer;margin:10px 8px 0 0}
-button:hover{filter:brightness(1.1)}
-button.ghost{background:transparent;color:var(--blue)}
-#apply{background:var(--green);border-color:var(--green)}
-#undo{color:var(--orange);border-color:var(--orange)}
-#reset{color:var(--red);border-color:var(--red)}
-#csv{color:var(--green);border-color:var(--green)}
-.row{display:flex;gap:10px}.row>div{flex:1}
-.hint{font-size:13px;color:var(--mute);margin:6px 0 0}
-#msg{min-height:22px;margin-top:10px;font-size:14px;color:var(--green)}#msg.bad{color:var(--red)}
-.scroll{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:4px;background:#fff}
-table{border-collapse:collapse;font:13px ui-monospace,Menlo,Consolas,monospace}
-th,td{padding:5px 10px;border:1px solid var(--line);text-align:right;white-space:nowrap}
-th{background:#dbeafe;color:#1e3a8a;position:sticky;top:0;font-weight:600}
-th.rh{position:sticky;left:0;top:auto}
-td.chg{background:var(--chg)}
-#grid td{padding:0}#grid input{width:92px;border:0;border-radius:0;padding:5px 6px;font:13px ui-monospace,monospace;text-align:right}
-#log{font:13px ui-monospace,Menlo,monospace;margin:0;padding-left:18px;color:var(--purple);max-height:180px;overflow:auto}
-.legend span{display:inline-block;width:12px;height:12px;background:var(--chg);border:1px solid var(--line);vertical-align:-1px;margin-right:5px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Bus Matrix Portal</title>
+    <!-- Math.js for complex number and matrix operations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --panel-bg: #ffffff;
+            --primary: #2563eb;
+            --text-main: #1f2937;
+            --border: #e5e7eb;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        .panel {
+            background: var(--panel-bg);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            overflow-y: auto;
+        }
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+        }
+        .display {
+            flex: 2;
+        }
+        h2 { margin-top: 0; }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .complex-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .complex-input input {
+            flex: 1;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #1d4ed8; }
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background: #eef2ff;
+            color: #3730a3;
+            border-radius: 4px;
+            font-size: 0.9em;
+            word-wrap: break-word;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.1em;
+        }
+        th { background-color: #f8fafc; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
-<header>
-  <h1>Z-bus modification portal</h1>
-  <p>Enter the Z-bus of an N-bus network (or start from nothing), then apply topology changes. The matrix is updated directly from the existing one, with no re-inversion of the Y-bus.</p>
-</header>
-<main>
-<div>
-  <section>
-    <h2>1. Initial Z-bus</h2>
-    <div class="row">
-      <div><label for="n">Number of buses (N)</label><input id="n" type="number" min="1" max="40" value="3"></div>
+
+    <div class="panel controls">
+        <h2>Network Modifications</h2>
+        
+        <div class="form-group">
+            <label for="mod-type">Select Modification Type:</label>
+            <select id="mod-type" onchange="updateFormUI()">
+                <option value="1">Type 1 (Add NEW bus to REF bus)</option>
+                <option value="2">Type 2 (Add NEW bus to EXISTING bus)</option>
+                <option value="3">Type 3 (EXISTING bus to REF bus)</option>
+                <option value="4">Type 4 (Between TWO EXISTING buses)</option>
+            </select>
+        </div>
+
+        <div class="form-group hidden" id="group-j">
+            <label for="bus-j">Existing Bus (j):</label>
+            <input type="number" id="bus-j" min="1" step="1">
+        </div>
+
+        <div class="form-group hidden" id="group-k">
+            <label for="bus-k">Existing Bus (k):</label>
+            <input type="number" id="bus-k" min="1" step="1">
+        </div>
+
+        <div class="form-group">
+            <label>Branch Impedance (Zb):</label>
+            <div class="complex-input">
+                <input type="number" id="zb-real" step="0.0001" placeholder="Real (R)" value="0">
+                <span>+ j</span>
+                <input type="number" id="zb-imag" step="0.0001" placeholder="Reactance (X)">
+            </div>
+        </div>
+
+        <button onclick="applyModification()">Apply Modification</button>
+        <button onclick="resetSystem()" style="background-color: #dc2626;">Reset System</button>
+
+        <div id="log">System initialized. Ready for Type 1 modification.</div>
     </div>
-    <button id="mkgrid" class="ghost">Create entry grid</button>
-    <button id="empty" class="ghost">Start with empty system</button>
-    <div class="scroll" id="gridwrap" style="margin-top:12px;display:none"><table id="grid"></table></div>
-    <button id="loadgrid" style="display:none">Load Z-bus from grid</button>
-    <label for="paste">Or paste a matrix (one row per line)</label>
-    <textarea id="paste" placeholder="0.25j 0.10j 0.15j&#10;0.10j 0.30j 0.12j&#10;0.15j 0.12j 0.40j"></textarea>
-    <button id="loadpaste">Load pasted matrix</button>
-    <p class="hint">Entries: <b>0.25</b> or <b>0.25j</b> = reactance (j0.25); <b>0.02+0.1j</b> = complex. Separate by spaces, commas or semicolons.</p>
-  </section>
 
-  <section>
-    <h2>2. Change the topology</h2>
-    <label for="type">Type of change</label>
-    <select id="type">
-      <option value="1">Type 1 – New bus to reference</option>
-      <option value="2">Type 2 – New bus to existing bus</option>
-      <option value="3">Type 3 – Existing bus to reference</option>
-      <option value="4">Type 4 – Branch between two existing buses</option>
-      <option value="5">Remove a branch</option>
-      <option value="6">Change a branch impedance</option>
-    </select>
-    <div class="row">
-      <div id="fj"><label for="j" id="lj">Bus j</label><input id="j" type="number" min="0" value="1"></div>
-      <div id="fk"><label for="k" id="lk">Bus k (0 = reference)</label><input id="k" type="number" min="0" value="0"></div>
+    <div class="panel display">
+        <h2>Z-Bus Matrix</h2>
+        <div id="matrix-container">
+            <p style="color: #6b7280;">Matrix is empty.</p>
+        </div>
     </div>
-    <div class="row">
-      <div><label for="z" id="lz">Branch impedance z</label><input id="z" value="0.2j"></div>
-      <div id="fz2"><label for="z2">New impedance</label><input id="z2" value="0.1j"></div>
-    </div>
-    <p class="hint" id="thint"></p>
-    <button id="apply">Apply change</button>
-    <button id="undo" class="ghost">Undo</button>
-    <button id="reset" class="ghost">Clear</button>
-    <div id="msg" role="status"></div>
-  </section>
-</div>
 
-<div>
-  <section>
-    <h2 id="mt">Z-bus matrix</h2>
-    <div class="legend hint" id="leg" style="display:none"><span></span>entries changed by the last operation</div>
-    <div class="scroll" style="margin-top:10px"><table id="out"></table></div>
-    <button id="csv" class="ghost">Download CSV</button>
-  </section>
-  <section>
-    <h2>History</h2>
-    <ol id="log"></ol>
-  </section>
-</div>
-</main>
+    <script>
+        let Z = [];
+        let busCount = 0;
 
-<script>
-"use strict";
-/* ---------- complex arithmetic: [re, im] ---------- */
-const cadd=(a,b)=>[a[0]+b[0],a[1]+b[1]], csub=(a,b)=>[a[0]-b[0],a[1]-b[1]];
-const cmul=(a,b)=>[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]];
-const cabs=a=>Math.hypot(a[0],a[1]), cneg=a=>[-a[0],-a[1]];
-function cdiv(a,b){const d=b[0]*b[0]+b[1]*b[1];return [(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d];}
+        function updateFormUI() {
+            const type = document.getElementById('mod-type').value;
+            document.getElementById('group-j').classList.toggle('hidden', type === '1');
+            document.getElementById('group-k').classList.toggle('hidden', type !== '4');
+        }
 
-function parseZ(s){
-  s=String(s).trim().replace(/\s+/g,"").replace(/i/gi,"j");
-  if(s==="")return [0,0];
-  const terms=s.split(/(?<![eE])(?=[+-])/);
-  let re=0,im=0,anyJ=false;
-  for(const t of terms){
-    let m;
-    if((m=t.match(/^([+-]?)j(.*)$/))){anyJ=true;im+=(m[1]==="-"?-1:1)*(m[2]===""?1:parseFloat(m[2]));}
-    else if(t.endsWith("j")){anyJ=true;const v=t.slice(0,-1);im+=(v===""||v==="+")?1:v==="-"?-1:parseFloat(v);}
-    else re+=parseFloat(t);
-  }
-  if(!isFinite(re)||!isFinite(im)||!/^[\d.eEj+\-]+$/.test(s))throw new Error('Cannot read "'+s+'" as a number.');
-  return anyJ?[re,im]:[0,re];            // bare number = reactance
-}
-function fmt(z){
-  const f=x=>Math.abs(x).toFixed(4);
-  if(Math.abs(z[0])<5e-10)return (z[1]<0?"-":"")+"j"+f(z[1]);
-  return (z[0]<0?"-":"")+f(z[0])+(z[1]<0?" - j":" + j")+f(z[1]);
-}
+        function logMsg(msg, isError = false) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerText = msg;
+            logDiv.style.backgroundColor = isError ? '#fef2f2' : '#eef2ff';
+            logDiv.style.color = isError ? '#991b1b' : '#3730a3';
+        }
 
-/* ---------- Z-bus building algorithm ---------- */
-// Types 1 & 2: add a new bus, joined to reference (k=0) or to existing bus k through z
-function addBus(Z,k,z){
-  const n=Z.length, col=k===0?Z.map(()=>[0,0]):Z.map(r=>r[k-1]);
-  const corner=k===0?z:cadd(Z[k-1][k-1],z);
-  const N=Z.map((r,i)=>[...r,col[i]]);
-  N.push([...col,corner]);
-  return N;
-}
-// Types 3 & 4: link between existing bus j and k (k=0: reference); eliminates the fictitious bus
-function addLink(Z,j,k,z){
-  j--; let col,den;
-  if(k===0){col=Z.map(r=>r[j]);den=cadd(Z[j][j],z);}
-  else{k--;col=Z.map(r=>csub(r[j],r[k]));
-       den=cadd(csub(cadd(Z[j][j],Z[k][k]),cmul([2,0],Z[j][k])),z);}
-  if(cabs(den)<1e-10)throw new Error("Singular update: the new branch would create an open circuit or a zero-impedance loop.");
-  return Z.map((r,i)=>r.map((v,h)=>csub(v,cdiv(cmul(col[i],col[h]),den))));
-}
-// Removal / change = adding a parallel branch of equivalent (negative) impedance
-const removeBranch=(Z,j,k,z)=>addLink(Z,j,k,cneg(z));
-function changeBranch(Z,j,k,zOld,zNew){
-  const d=csub(zOld,zNew);
-  if(cabs(d)<1e-12)throw new Error("Old and new impedances are identical.");
-  return addLink(Z,j,k,cdiv(cmul(zOld,zNew),d));   // zp so that zOld || zp = zNew
-}
+        function renderMatrix() {
+            const container = document.getElementById('matrix-container');
+            if (busCount === 0) {
+                container.innerHTML = '<p style="color: #6b7280;">Matrix is empty.</p>';
+                return;
+            }
 
-/* ---------- state & rendering ---------- */
-const $=id=>document.getElementById(id);
-let Z=null, prev=null, hist=[], logLines=[];
-const clone=M=>M.map(r=>r.map(v=>[v[0],v[1]]));
-function say(t,bad){$("msg").textContent=t;$("msg").className=bad?"bad":"";}
-function log(t){logLines.push(t);$("log").innerHTML=logLines.map((l,i)=>"<li>"+l+"</li>").join("");$("log").scrollTop=1e9;}
+            let html = '<table><thead><tr><th></th>';
+            for (let i = 1; i <= busCount; i++) html += `<th>Bus ${i}</th>`;
+            html += '</tr></thead><tbody>';
 
-function render(){
-  const n=Z?Z.length:0, t=$("out");
-  $("mt").textContent=n?"Z-bus matrix ("+n+" × "+n+")":"Z-bus matrix";
-  if(!n){t.innerHTML="<tr><td>No buses yet. Load a matrix or start with an empty system, then add Type 1 branches.</td></tr>";$("leg").style.display="none";return;}
-  let h="<tr><th></th>"+Z.map((_,i)=>"<th>"+(i+1)+"</th>").join("")+"</tr>";
-  Z.forEach((r,i)=>{h+='<tr><th class="rh">'+(i+1)+"</th>"+r.map((v,j)=>{
-    const old=prev&&prev[i]&&prev[i][j];
-    const ch=prev&&(!old||cabs(csub(old,v))>1e-9);
-    return "<td"+(ch?' class="chg"':"")+">"+fmt(v)+"</td>";}).join("")+"</tr>";});
-  t.innerHTML=h; $("leg").style.display=prev?"block":"none";
-}
-function loadZ(M,note){Z=M;prev=null;hist=[];logLines=[];log(note);render();say("Z-bus loaded. Choose a change in step 2.");setHints();}
+            for (let r = 0; r < busCount; r++) {
+                html += `<tr><th>Bus ${r + 1}</th>`;
+                for (let c = 0; c < busCount; c++) {
+                    const val = Z[r][c];
+                    const re = val.re.toFixed(4);
+                    const im = val.im.toFixed(4);
+                    const sign = im >= 0 ? '+' : '-';
+                    html += `<td>${re} ${sign} j${Math.abs(im).toFixed(4)}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
 
-/* ---------- step 1: input ---------- */
-$("mkgrid").onclick=()=>{
-  const n=parseInt($("n").value);
-  if(!(n>=1&&n<=40))return say("Enter N between 1 and 40.",true);
-  let h="<tr><th></th>"+Array.from({length:n},(_,i)=>"<th>"+(i+1)+"</th>").join("")+"</tr>";
-  for(let i=0;i<n;i++){h+='<tr><th class="rh">'+(i+1)+"</th>";
-    for(let j=0;j<n;j++)h+='<td><input data-i="'+i+'" data-j="'+j+'" value="0" aria-label="Z'+(i+1)+","+(j+1)+'"></td>';
-    h+="</tr>";}
-  $("grid").innerHTML=h;$("gridwrap").style.display="block";$("loadgrid").style.display="inline-block";
-};
-$("grid").addEventListener("input",e=>{          // keep the grid symmetric
-  const a=e.target;if(!a.dataset.i)return;
-  const m=$("grid").querySelector('input[data-i="'+a.dataset.j+'"][data-j="'+a.dataset.i+'"]');
-  if(m&&m!==a)m.value=a.value;
-});
-function readMatrix(rows){
-  const M=rows.map(r=>r.map(parseZ)), n=M.length;
-  if(!n||M.some(r=>r.length!==n))throw new Error("The matrix must be square (N rows, N entries each).");
-  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)
-    if(cabs(csub(M[i][j],M[j][i]))>1e-9)throw new Error("Matrix is not symmetric at ("+(i+1)+","+(j+1)+"). Z-bus must satisfy Zij = Zji.");
-  return M;
-}
-$("loadgrid").onclick=()=>{try{
-  const n=Math.sqrt($("grid").querySelectorAll("input").length),rows=[];
-  for(let i=0;i<n;i++){rows.push([]);for(let j=0;j<n;j++)rows[i].push($("grid").querySelector('input[data-i="'+i+'"][data-j="'+j+'"]').value);}
-  loadZ(readMatrix(rows),"Loaded "+n+"-bus Z-bus from grid.");}catch(e){say(e.message,true);}};
-$("loadpaste").onclick=()=>{try{
-  const rows=$("paste").value.trim().split(/\n+/).map(l=>l.trim().split(/[,;\s]+/).filter(Boolean));
-  loadZ(readMatrix(rows),"Loaded "+rows.length+"-bus Z-bus from pasted text.");}catch(e){say(e.message,true);}};
-$("empty").onclick=()=>loadZ([],"Started with an empty system (reference only).");
+        function resetSystem() {
+            Z = [];
+            busCount = 0;
+            logMsg("System reset. Matrix is empty.");
+            renderMatrix();
+        }
 
-/* ---------- step 2: commands ---------- */
-const TYPES={
- 1:{h:"Adds bus N+1 joined to the reference. Z gains a new diagonal entry z; other new entries are 0.",j:0,k:0,z2:0},
- 2:{h:"Adds bus N+1 joined to existing bus k. The new row and column copy those of bus k.",j:0,k:1,z2:0,lk:"Existing bus k"},
- 3:{h:"Joins existing bus j to the reference. The matrix keeps its size; the fictitious bus is eliminated.",j:1,k:0,z2:0,lj:"Existing bus j"},
- 4:{h:"Joins existing buses j and k. The matrix keeps its size.",j:1,k:1,z2:0,lk:"Existing bus k"},
- 5:{h:"Enter the branch as it exists now (use k = 0 for a branch to reference). Equivalent to adding −z in parallel.",j:1,k:1,z2:0,lz:"Impedance being removed"},
- 6:{h:"Enter the branch and its present impedance, then the replacement. A parallel branch z·z′/(z−z′) is added.",j:1,k:1,z2:1,lz:"Present impedance"}
-};
-function setHints(){
-  const t=+$("type").value,c=TYPES[t];
-  $("fj").style.display=c.j?"block":"none";$("fk").style.display=c.k?"block":"none";$("fz2").style.display=c.z2?"block":"none";
-  $("lj").textContent=t>=5?"Bus j":(c.lj||"Bus j");$("lk").textContent=t>=5?"Bus k (0 = reference)":(c.lk||"Bus k");
-  $("lz").textContent=c.lz||"Branch impedance z";
-  $("thint").textContent=c.h+(Z?"  Current N = "+Z.length+".":"");
-}
-$("type").onchange=setHints;
+        function applyModification() {
+            const type = document.getElementById('mod-type').value;
+            const re = parseFloat(document.getElementById('zb-real').value) || 0;
+            const im = parseFloat(document.getElementById('zb-imag').value) || 0;
+            const zb = math.complex(re, im);
 
-function busCheck(v,min,name){
-  if(!Number.isInteger(v)||v<min||v>Z.length)throw new Error(name+" must be an integer between "+min+" and "+Z.length+".");
-}
-$("apply").onclick=()=>{try{
-  if(!Z)throw new Error("Load or create a Z-bus first (step 1).");
-  const t=+$("type").value,j=parseInt($("j").value),k=parseInt($("k").value),z=parseZ($("z").value);
-  let N,desc;
-  if(t===1){N=addBus(Z,0,z);desc="Type 1: new bus "+(Z.length+1)+" to reference, z = "+fmt(z);}
-  else if(t===2){busCheck(k,1,"Bus k");N=addBus(Z,k,z);desc="Type 2: new bus "+(Z.length+1)+" to bus "+k+", z = "+fmt(z);}
-  else if(t===3){busCheck(j,1,"Bus j");N=addLink(Z,j,0,z);desc="Type 3: bus "+j+" to reference, z = "+fmt(z);}
-  else{
-    busCheck(j,1,"Bus j");busCheck(k,0,"Bus k");if(j===k)throw new Error("Bus j and bus k must differ.");
-    if(t===4){if(k===0)throw new Error("For a branch to reference use Type 3.");N=addLink(Z,j,k,z);desc="Type 4: branch "+j+"–"+k+", z = "+fmt(z);}
-    else if(t===5){N=removeBranch(Z,j,k,z);desc="Removed branch "+j+"–"+(k||"ref")+" (z = "+fmt(z)+")";}
-    else{const z2=parseZ($("z2").value);N=changeBranch(Z,j,k,z,z2);desc="Changed branch "+j+"–"+(k||"ref")+" from "+fmt(z)+" to "+fmt(z2);}
-  }
-  hist.push({Z:clone(Z),log:logLines.length});
-  prev=clone(Z);Z=N;log(desc);render();say("Done. New matrix is "+Z.length+" × "+Z.length+".");setHints();
-}catch(e){say(e.message,true);}};
-$("undo").onclick=()=>{
-  const h=hist.pop();if(!h)return say("Nothing to undo.",true);
-  Z=h.Z;prev=null;logLines.length=h.log;log("Undid last change.");render();say("Last change undone.");setHints();
-};
-$("reset").onclick=()=>{Z=null;prev=null;hist=[];logLines=[];$("log").innerHTML="";render();say("");setHints();};
-$("csv").onclick=()=>{
-  if(!Z||!Z.length)return say("No matrix to export.",true);
-  const s=Z.map(r=>r.map(v=>v[0].toFixed(6)+(v[1]<0?"-":"+")+Math.abs(v[1]).toFixed(6)+"j").join(",")).join("\n");
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/csv"}));a.download="zbus.csv";a.click();
-};
-render();setHints();
-</script>
+            if (re === 0 && im === 0) {
+                logMsg("Impedance cannot be zero.", true);
+                return;
+            }
+
+            if (type === '1') {
+                if (busCount === 0) {
+                    Z = [[zb]];
+                } else {
+                    for (let i = 0; i < busCount; i++) Z[i].push(math.complex(0, 0));
+                    let newRow = Array(busCount + 1).fill(math.complex(0, 0));
+                    newRow[busCount] = zb;
+                    Z.push(newRow);
+                }
+                busCount++;
+                logMsg("Type 1 Modification Applied.");
+            } 
+            else {
+                if (busCount === 0) {
+                    logMsg("System is empty. Start with Type 1.", true);
+                    return;
+                }
+                
+                const j = parseInt(document.getElementById('bus-j').value) - 1;
+                if (isNaN(j) || j < 0 || j >= busCount) {
+                    logMsg("Invalid Existing Bus (j).", true);
+                    return;
+                }
+
+                if (type === '2') {
+                    for (let i = 0; i < busCount; i++) Z[i].push(Z[i][j]);
+                    let newRow = [];
+                    for (let i = 0; i < busCount; i++) newRow.push(Z[j][i]);
+                    newRow.push(math.add(Z[j][j], zb));
+                    Z.push(newRow);
+                    busCount++;
+                    logMsg(`Type 2 Modification Applied (New Bus to Bus ${j + 1}).`);
+                } 
+                else if (type === '3') {
+                    const denom = math.add(Z[j][j], zb);
+                    let Z_new = [];
+                    for (let r = 0; r < busCount; r++) {
+                        let row = [];
+                        for (let c = 0; c < busCount; c++) {
+                            const delta = math.divide(math.multiply(Z[r][j], Z[j][c]), denom);
+                            row.push(math.subtract(Z[r][c], delta));
+                        }
+                        Z_new.push(row);
+                    }
+                    Z = Z_new;
+                    logMsg(`Type 3 Modification Applied (Bus ${j + 1} to Ref).`);
+                } 
+                else if (type === '4') {
+                    const k = parseInt(document.getElementById('bus-k').value) - 1;
+                    if (isNaN(k) || k < 0 || k >= busCount || k === j) {
+                        logMsg("Invalid Existing Bus (k) or k = j.", true);
+                        return;
+                    }
+                    const denom = math.add(math.subtract(math.add(Z[j][j], Z[k][k]), math.multiply(2, Z[j][k])), zb);
+                    let Z_new = [];
+                    for (let r = 0; r < busCount; r++) {
+                        let row = [];
+                        for (let c = 0; c < busCount; c++) {
+                            const d_col = math.subtract(Z[r][j], Z[r][k]);
+                            const d_row = math.subtract(Z[j][c], Z[k][c]);
+                            const delta = math.divide(math.multiply(d_col, d_row), denom);
+                            row.push(math.subtract(Z[r][c], delta));
+                        }
+                        Z_new.push(row);
+                    }
+                    Z = Z_new;
+                    logMsg(`Type 4 Modification Applied (Bus ${j + 1} to Bus ${k + 1}).`);
+                }
+            }
+            renderMatrix();
+        }
+
+        // Initialize UI on load
+        updateFormUI();
+    </script>
 </body>
 </html>
