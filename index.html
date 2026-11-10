@@ -69,14 +69,14 @@
   <div class="max-w-6xl mx-auto px-6 pt-6">
     <header class="mb-4">
       <h1>Power Systems Assignment 4</h1>
-      <p class="text-sm text-slate-500 mt-2 max-w-3xl">Z-bus modification, sequence components, unsymmetrical faults and worked problems. Complex input formats: <code>j0.25</code>, <code>0.1+j0.4</code>, <code>0.1-0.4j</code> or polar <code>110∠0</code>. Bus 0 is strictly the reference bus.</p>
+      <p class="text-sm text-slate-500 mt-2 max-w-3xl">Impedance Matrix modification, sequence components, unsymmetrical faults and worked problems. Complex input formats: <code>j0.25</code>, <code>0.1+j0.4</code>, <code>0.1-0.4j</code> or polar <code>110∠0</code>. Bus 0 is strictly the reference bus.</p>
     </header>
 
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mt-6">
-      <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs" id="tabs-container">
+      <nav class="flex space-x-4 overflow-x-auto pb-2" aria-label="Tabs" id="tabs-container">
         <!-- Tabs generated/managed by JS for consistency -->
-        <button class="tab-btn whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm transition-colors border-blue-600 text-blue-600" data-t="t1">Generalized Interface</button>
-        <button class="tab-btn whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm transition-colors border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-t="t2">Solved Questions</button>
+        <button class="tab-btn bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow" data-t="t1">Generalized Interface</button>
+        <button class="tab-btn bg-white text-gray-700 border border-gray-300 font-semibold py-2 px-4 rounded-md hover:bg-gray-50" data-t="t2">Solved Questions</button>
       </nav>
       
       <div class="pb-3 mt-4 sm:mt-0 flex items-center bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
@@ -94,8 +94,18 @@
 <!-- ============ TAB 1: GENERALIZED INTERFACE ============ -->
 <div id="t1" class="tab-body flex flex-col gap-6 w-full">
   
+  <section class="card bg-blue-50/50 border-blue-200">
+    <h2 class="text-blue-800 border-blue-200">How to Use This Portal</h2>
+    <ol class="list-decimal list-inside space-y-2 text-slate-700 text-sm">
+      <li><strong>Initial Impedance Matrix:</strong> Enter the number of buses and click "Create Matrix Grid".</li>
+      <li><strong>Fill Matrix:</strong> Fill in the impedance values in the grid, then click "Load Entered Matrix" to lock it in.</li>
+      <li><strong>Modify Network:</strong> Go to "Topology Modification", select the modification type, input the parameters, and click "Apply Change".</li>
+      <li><strong>Analyze:</strong> Scroll down to use the Sequence Components or Fault Analysis tools based on your current network.</li>
+    </ol>
+  </section>
+
   <section class="card">
-    <h2>1. Initial Z-bus Configuration</h2>
+    <h2>1. Initial Impedance Matrix Configuration</h2>
     <div class="row">
       <div>
         <label for="n">Number of buses N <span class="text-slate-400 font-normal ml-1">(0 = empty)</span></label>
@@ -127,7 +137,7 @@
       <div id="fP" class="!max-w-[100px]"><label for="p">New bus p</label><input id="p" type="number"></div>
       <div id="fJ" class="!max-w-[100px]"><label for="j">From bus j</label><input id="j" type="number" min="0" value="1"></div>
       <div id="fK" class="!max-w-[100px]"><label for="k">To bus k</label><input id="k" type="number" min="0" value="0"></div>
-      <div id="fZ"><label for="z">Branch impedance (Zb)</label><input id="z" value="j0.2"></div>
+      <div id="fZ"><label for="z">Branch Impedance</label><input id="z" value="j0.2"></div>
       <div id="fZo" class="hidden"><label for="zo">Old impedance</label><input id="zo" value="j0.2"></div>
       <div id="fZn" class="hidden"><label for="zn">New impedance (blank = remove)</label><input id="zn"></div>
       
@@ -143,7 +153,7 @@
   <section class="card">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-5 gap-4">
       <h2 class="!border-none !pb-0 !mb-0 flex items-center gap-3">
-        3. Current Z-bus Matrix 
+        3. Current Impedance Matrix 
         <span id="dim" class="bg-blue-100 text-blue-800 text-xs py-1 px-2 rounded font-mono"></span>
       </h2>
       <select id="fmt" class="w-auto !py-1.5 !text-sm border-slate-200">
@@ -158,14 +168,14 @@
   </section>
 
   <section class="card">
-    <h2>4. Network Branch List & Y-bus Inversion</h2>
-    <p class="q">Enter branches in the format: <code>from to Z [E]</code>. Use bus <code>0</code> for the reference. An optional fourth value <code>E</code> designates a source branch (EMF in pu in series with Z), which is utilized solely for branch current calculations.</p>
+    <h2>4. Network Branch List & Admittance Matrix Inversion</h2>
+    <p class="q">Enter branches in the format: <code>from to Impedance [Electromotive Force]</code>. Use bus <code>0</code> for the reference. An optional fourth value <code>Electromotive Force</code> designates a source branch (Electromotive Force in per unit in series with Impedance), which is utilized solely for branch current calculations.</p>
     <textarea id="br" rows="6" spellcheck="false" class="p-4 bg-slate-900 text-slate-100 border-none rounded-lg shadow-inner">1 0 0.6
 2 0 0.5
 2 3 0.5
 1 3 0.25</textarea>
     <div class="row mt-4">
-      <button id="byb">Compute Z-bus (Inverse of Y-bus)</button>
+      <button id="byb">Compute Impedance Matrix (Inverse of Admittance Matrix)</button>
     </div>
     <div class="msg" id="m3"></div>
     <div class="wrap mt-4"><table class="out" id="yb"></table></div>
@@ -198,49 +208,49 @@
     <div class="border-t border-slate-200 mt-8 pt-6">
       <h3>Transposed Line Sequence Impedances</h3>
       <div class="row items-end">
-        <div><label for="zs">Zs (Self Impedance)</label><input id="zs" value="j0.5"></div>
-        <div><label for="zm">Zm (Mutual Impedance)</label><input id="zm" value="j0.2"></div>
-        <div class="!flex-none"><button id="zgo" class="alt">Compute Z0, Z1, Z2</button></div>
+        <div><label for="zs">Self Impedance</label><input id="zs" value="j0.5"></div>
+        <div><label for="zm">Mutual Impedance</label><input id="zm" value="j0.2"></div>
+        <div class="!flex-none"><button id="zgo" class="alt">Compute Zero, Positive, Negative Sequences</button></div>
       </div>
       <div id="zout" class="mt-4"></div>
-      <p class="note">Formulas: Z0 = Zs + 2Zm, Z1 = Z2 = Zs − Zm. <br>Phase-shift rule for Δ–Y transformers: Positive sequence on the star (HV) side leads the delta side by 30°; negative sequence lags by 30°.</p>
+      <p class="note">Formulas: Zero Sequence = Self Impedance + 2 × Mutual Impedance, Positive Sequence = Negative Sequence = Self Impedance − Mutual Impedance. <br>Phase-shift rule for Delta–Star transformers: Positive sequence on the star (High Voltage) side leads the delta side by 30°; negative sequence lags by 30°.</p>
     </div>
   </section>
 
   <!-- Fault Analysis Tools -->
   <section class="card">
-    <h2>6. Three-Phase Fault (Using Current Z-bus)</h2>
+    <h2>6. Three-Phase Fault (Using Current Impedance Matrix)</h2>
     <div class="row items-end">
       <div class="!max-w-[120px]"><label for="fb">Fault bus (r)</label><input id="fb" type="number" min="1" value="1"></div>
-      <div><label for="fz">Fault impedance (Zf)</label><input id="fz" value="0"></div>
-      <div><label for="fv">Prefault voltage (V0)</label><input id="fv" value="1"></div>
-      <div class="!flex-none"><button id="fgo">Compute 3Φ Fault</button></div>
+      <div><label for="fz">Fault Impedance</label><input id="fz" value="0"></div>
+      <div><label for="fv">Prefault voltage</label><input id="fv" value="1"></div>
+      <div class="!flex-none"><button id="fgo">Compute Three-Phase Fault</button></div>
     </div>
     <div class="msg" id="m4"></div>
     <div id="fout" class="mt-4"></div>
-    <p class="note">If = V0 / (Zrr + Zf)  •  Vi(f) = V0 − Zir·If  •  Branch currents use the branch list defined in section 4. Prefault currents are assumed zero.</p>
+    <p class="note">Fault Current = Prefault Voltage / (Diagonal Impedance + Fault Impedance)  •  Voltage at bus i = Prefault Voltage − Transfer Impedance × Fault Current  •  Branch currents use the branch list defined in section 4. Prefault currents are assumed zero.</p>
   </section>
 
   <section class="card">
     <h2>7. Thevenin Equivalent Fault Solver</h2>
-    <p class="q">Enter the Thevenin sequence impedances seen from the fault point in per-unit (pu). Phase <i>a</i> is the reference. LL is between <i>b</i> and <i>c</i>. LLG is <i>b–c–ground</i>.</p>
+    <p class="q">Enter the Thevenin sequence impedances seen from the fault point in per unit. Phase <i>a</i> is the reference. Line-to-Line is between <i>b</i> and <i>c</i>. Line-to-Line-to-Ground is <i>b–c–ground</i>.</p>
     <div class="row items-end bg-slate-50 p-5 rounded-lg border border-slate-200">
       <div class="!max-w-[180px]">
         <label for="ft">Fault Classification</label>
         <select id="ft">
-          <option value="LG">Single Line-to-Ground (LG)</option>
-          <option value="LL">Line-to-Line (LL)</option>
-          <option value="LLG">Double Line-to-Ground (LLG)</option>
-          <option value="LLL">Three-Phase (LLL)</option>
+          <option value="LG">Single Line-to-Ground</option>
+          <option value="LL">Line-to-Line</option>
+          <option value="LLG">Double Line-to-Ground</option>
+          <option value="LLL">Three-Phase</option>
         </select>
       </div>
-      <div class="!max-w-[100px]"><label for="gV">Prefault V</label><input id="gV" value="1"></div>
-      <div><label for="g1">Z1 (+ Seq)</label><input id="g1" value="j0.157"></div>
-      <div><label for="g2">Z2 (- Seq)</label><input id="g2" value="j0.157"></div>
-      <div><label for="g0">Z0 (0 Seq)</label><input id="g0" value="j0.051"></div>
-      <div class="!max-w-[100px]"><label for="gf">Zf</label><input id="gf" value="0"></div>
-      <div class="!max-w-[120px]"><label for="gS">Base MVA</label><input id="gS" value="250"></div>
-      <div class="!max-w-[120px]"><label for="gk">Base kV (L-L)</label><input id="gk" value="220"></div>
+      <div class="!max-w-[100px]"><label for="gV">Prefault Voltage</label><input id="gV" value="1"></div>
+      <div><label for="g1">Positive Sequence</label><input id="g1" value="j0.157"></div>
+      <div><label for="g2">Negative Sequence</label><input id="g2" value="j0.157"></div>
+      <div><label for="g0">Zero Sequence</label><input id="g0" value="j0.051"></div>
+      <div class="!max-w-[100px]"><label for="gf">Fault Impedance</label><input id="gf" value="0"></div>
+      <div class="!max-w-[120px]"><label for="gS">Base Megavolt-Amperes</label><input id="gS" value="250"></div>
+      <div class="!max-w-[120px]"><label for="gk">Base Kilovolts (Line-to-Line)</label><input id="gk" value="220"></div>
       <div class="!flex-none w-full sm:w-auto"><button id="ggo" class="w-full">Solve Fault</button></div>
     </div>
     <div class="msg" id="m6"></div>
@@ -252,34 +262,34 @@
 <div id="t2" class="tab-body hidden flex-col gap-6 w-full">
 
   <section class="card border-t-4 border-t-blue-600">
-    <h2>Question 1: Fault at bus 2 (G1–T1–Line1/2–T2–G2 System)</h2>
-    <p class="q text-sm"><strong>Scenario:</strong> Base 250 MVA, 11 kV on the generator side, 220 kV on the line side. T1 is Δ(G1 side)–Yg, T2 is Yg–Yg, G1 is Yg, G2 is Yg grounded through Xn. <br><br><strong>Find:</strong> (a) Fault current, (b) Line-to-neutral voltages at the fault, (c) Currents and voltages at the generator terminals.</p>
+    <h2>Question 1: Fault at bus 2 (Generator 1–Transformer 1–Line 1/2–Transformer 2–Generator 2 System)</h2>
+    <p class="q text-sm"><strong>Scenario:</strong> Base 250 Megavolt-Amperes, 11 Kilovolts on the generator side, 220 Kilovolts on the line side. Transformer 1 is Delta(Generator 1 side)–Star grounded, Transformer 2 is Star grounded–Star grounded, Generator 1 is Star grounded, Generator 2 is Star grounded through Neutral Reactance. <br><br><strong>Find:</strong> (a) Fault current, (b) Line-to-neutral voltages at the fault, (c) Currents and voltages at the generator terminals.</p>
     
     <div class="wrap mb-5"><table class="inp !min-w-0" id="eq"></table></div>
     
     <div class="row items-end bg-slate-50 p-5 rounded-lg border border-slate-200">
-      <div><label for="xn">G2 Neutral Reactance Xn</label><input id="xn" value="0.03"></div>
+      <div><label for="xn">Generator 2 Neutral Reactance</label><input id="xn" value="0.03"></div>
       <div class="!max-w-[200px]">
         <label for="f4">Fault Type</label>
         <select id="f4">
-          <option value="LG">LG, phase a (As Asked)</option>
-          <option value="LL">LL (b–c)</option>
-          <option value="LLG">LLG (b–c–g)</option>
-          <option value="LLL">LLL</option>
+          <option value="LG">Line-to-Ground, phase a (As Asked)</option>
+          <option value="LL">Line-to-Line (b–c)</option>
+          <option value="LLG">Line-to-Line-to-Ground (b–c–ground)</option>
+          <option value="LLL">Three-Phase</option>
         </select>
       </div>
-      <div class="!max-w-[100px]"><label for="zf4">Fault Zf</label><input id="zf4" value="0"></div>
-      <div class="!max-w-[120px]"><label for="S4">Base MVA</label><input id="S4" value="250"></div>
-      <div class="!max-w-[100px]"><label for="kg">kV (Gen)</label><input id="kg" value="11"></div>
-      <div class="!max-w-[100px]"><label for="kh">kV (Line)</label><input id="kh" value="220"></div>
+      <div class="!max-w-[100px]"><label for="zf4">Fault Impedance</label><input id="zf4" value="0"></div>
+      <div class="!max-w-[120px]"><label for="S4">Base Megavolt-Amperes</label><input id="S4" value="250"></div>
+      <div class="!max-w-[100px]"><label for="kg">Kilovolts (Generator)</label><input id="kg" value="11"></div>
+      <div class="!max-w-[100px]"><label for="kh">Kilovolts (Line)</label><input id="kh" value="220"></div>
       <div class="!flex-none"><button id="go4">Calculate Q1</button></div>
     </div>
     <div class="msg" id="m7"></div><div id="o4"></div>
   </section>
 
   <section class="card border-t-4 border-t-blue-500">
-    <h2>Question 2: Radial Network, 3-Phase Fault at F</h2>
-    <p class="q">Find the fault current and the line voltage at the 11 kV bus during the fault.</p>
+    <h2>Question 2: Radial Network, Three-Phase Fault at F</h2>
+    <p class="q">Find the fault current and the line voltage at the 11 Kilovolts bus during the fault.</p>
     <div class="row" id="f1"></div>
     <div class="mt-6 border-t border-slate-100 pt-4 flex justify-end">
       <button id="go1">Solve Question 2</button>
@@ -324,8 +334,8 @@
   </section>
 
   <section class="card border-t-4 border-t-slate-700">
-    <h2>Question 5: Build Z-bus of 4-bus System</h2>
-    <p class="q mb-5">Zbus configuration for R–1 0.6, R–2 0.5, 2–3 0.5, 1–3 0.25 using sequential type links. Removing 1–3 is tested as a type-4 link of −0.25.</p>
+    <h2>Question 5: Build Impedance Matrix of 4-bus System</h2>
+    <p class="q mb-5">Impedance Matrix configuration for R–1 0.6, R–2 0.5, 2–3 0.5, 1–3 0.25 using sequential type links. Removing 1–3 is tested as a type-4 link of −0.25.</p>
     <div class="flex gap-4">
       <button id="p4">Solve Q5 (Load into Interface)</button>
       <button id="p4b" class="alt">Solve Q5 Variant (Remove line 1-3)</button>
@@ -333,8 +343,8 @@
   </section>
 
   <section class="card border-t-4 border-t-slate-700">
-    <h2>Question 6: Y-bus Inversion & 3Φ Fault at bus 4</h2>
-    <p class="q mb-5">4-bus network utilizing generator branches (T + G = j0.15) at buses 1 and 2. Verifies branch current distribution formulas.</p>
+    <h2>Question 6: Admittance Matrix Inversion & Three-Phase Fault at bus 4</h2>
+    <p class="q mb-5">4-bus network utilizing generator branches (Transformer + Generator = j0.15) at buses 1 and 2. Verifies branch current distribution formulas.</p>
     <div class="flex gap-4">
       <button id="p5">Solve Q6 (Load into Interface)</button>
     </div>
@@ -345,8 +355,8 @@
 
 <script>
 /* ===== UI Handling & Navigation ===== */
-const tabActive = "tab-btn whitespace-nowrap py-4 px-2 border-b-2 border-blue-600 font-medium text-sm text-blue-600 transition-colors";
-const tabInactive = "tab-btn whitespace-nowrap py-4 px-2 border-b-2 border-transparent font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors";
+const tabActive = "tab-btn bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow transition-colors";
+const tabInactive = "tab-btn bg-white text-gray-700 border border-gray-300 font-semibold py-2 px-4 rounded-md hover:bg-gray-50 transition-colors";
 
 document.querySelectorAll("button.tab-btn").forEach(b => {
   b.onclick = () => {
@@ -508,18 +518,18 @@ function applyOp(o) {
     if(o.p !== n+1) throw new Error("New bus number must be " + (n+1) + ".");
     chk(o.k, n, "Bus k", false);
     R = aug(Z, col(Z, o.k), C.add(Z[o.k-1][o.k-1], Zb));
-    tx = "Type 2: bus " + o.p + " to bus " + o.k + ", Zb = " + fr(Zb);
+    tx = "Type 2: bus " + o.p + " to bus " + o.k + ", Branch Impedance = " + fr(Zb);
   } else if(o.t === 3) {
     const Zb = parseC(o.z);
     chk(o.k, n, "Bus k", false);
     R = T3(Z, o.k, Zb);
-    tx = "Type 3: bus " + o.k + " to reference, Zb = " + fr(Zb);
+    tx = "Type 3: bus " + o.k + " to reference, Branch Impedance = " + fr(Zb);
   } else if(o.t === 4) {
     const Zb = parseC(o.z);
     chk(o.j, n, "Bus j", false); chk(o.k, n, "Bus k", false);
     if(o.j === o.k) throw new Error("Buses j and k must differ.");
     R = T4(Z, o.j, o.k, Zb);
-    tx = "Type 4: bus " + o.j + " to bus " + o.k + ", Zb = " + fr(Zb);
+    tx = "Type 4: bus " + o.j + " to bus " + o.k + ", Branch Impedance = " + fr(Zb);
   } else {
     chk(o.j, n, "Bus j", true); chk(o.k, n, "Bus k", true);
     if(o.j === o.k) throw new Error("Buses j and k must differ.");
@@ -552,11 +562,11 @@ function syncForm() {
   const t = +$("type").value, sh = (i, v) => $(i).classList.toggle("hidden", !v);
   sh("fP", t < 3); sh("fJ", t > 3); sh("fK", t !== 1); sh("fZ", t !== 5); sh("fZo", t === 5); sh("fZn", t === 5);
   $("hint").innerHTML = {
-    1: "<strong>New bus p to reference:</strong> Z(p,p) = Zb, other new entries 0.",
-    2: "<strong>New bus p to existing bus k:</strong> New row/column = column k of Zbus, Z(p,p) = Z(k,k) + Zb.",
-    3: "<strong>Link bus k to reference:</strong> Augment with Z(k,k)+Zb, then Kron-eliminate the extra row/column.",
-    4: "<strong>Link between j and k:</strong> New row = Z(i,j) − Z(i,k); Z(l,l) = Zb + Z(j,j) + Z(k,k) − 2Z(j,k); then Kron reduction.",
-    5: "<strong>Branch Change:</strong> Enter old and new branch impedance. Applied as a parallel link Zl = Zold·Znew/(Zold − Znew); blank new value removes the branch (Zl = −Zold). Use bus 0 for a branch to reference."
+    1: "<strong>New bus p to reference:</strong> Impedance Matrix(p,p) = Branch Impedance, other new entries 0.",
+    2: "<strong>New bus p to existing bus k:</strong> New row/column = column k of Impedance Matrix, Impedance Matrix(p,p) = Impedance Matrix(k,k) + Branch Impedance.",
+    3: "<strong>Link bus k to reference:</strong> Augment with Impedance Matrix(k,k) + Branch Impedance, then Kron-eliminate the extra row/column.",
+    4: "<strong>Link between j and k:</strong> New row = Impedance Matrix(i,j) − Impedance Matrix(i,k); Impedance Matrix(l,l) = Branch Impedance + Impedance Matrix(j,j) + Impedance Matrix(k,k) − 2 × Impedance Matrix(j,k); then Kron reduction.",
+    5: "<strong>Branch Change:</strong> Enter old and new branch impedance. Applied as a parallel link Link Impedance = Old Impedance × New Impedance / (Old Impedance − New Impedance); blank new value removes the branch (Link Impedance = −Old Impedance). Use bus 0 for a branch to reference."
   }[t];
 }
 
@@ -631,23 +641,23 @@ function buildZfromBranches() {
     }
   }
   matT(Y, "yb");
-  Z = inv(Y); hist = [{ Z: [], tx: "Z-bus obtained by inverting Y-bus of the branch list" }]; logR(); render();
+  Z = inv(Y); hist = [{ Z: [], tx: "Impedance Matrix obtained by inverting Admittance Matrix of the branch list" }]; logR(); render();
 }
 $("byb").onclick = () => guard("m3", buildZfromBranches);
 
 /* 3-phase fault from Zbus */
 function zFault() {
   const n = Z.length, r = parseInt($("fb").value);
-  if(!n) throw new Error("Build a Z-bus first.");
+  if(!n) throw new Error("Build an Impedance Matrix first.");
   chk(r, n, "Fault bus", false);
   const zf = parseC($("fz").value), v0 = parseC($("fv").value), If = C.div(v0, C.add(Z[r-1][r-1], zf));
   const V = Z.map((row, i) => C.sub(v0, C.mul(row[r-1], If)));
   const rows = [
-    {h: "Fault at bus " + r + " (Zf = " + fr(zf) + ")"}, 
-    ["Fault current If", If], 
+    {h: "Fault at bus " + r + " (Fault Impedance = " + fr(zf) + ")"}, 
+    ["Fault current", If], 
     {h: "Bus voltages during fault"}
   ];
-  V.forEach((v, i) => rows.push(["V" + (i+1), v]));
+  V.forEach((v, i) => rows.push(["Voltage " + (i+1), v]));
   
   let bl = []; try { bl = branches() } catch(e) {}
   const vv = b => b === 0 ? [0,0] : V[b-1];
@@ -656,9 +666,9 @@ function zFault() {
     rows.push({h: "Branch currents (positive direction: first bus → second bus; source branches: reference → bus)"});
     ok.forEach(x => {
       if(x.E) {
-        rows.push(["Source " + x.b + "→" + x.a + " (E = " + fr(x.E) + ")", C.div(C.sub(C.mul(x.E, v0), vv(x.a||x.b)), x.z)]);
+        rows.push(["Source " + x.b + "→" + x.a + " (Electromotive Force = " + fr(x.E) + ")", C.div(C.sub(C.mul(x.E, v0), vv(x.a||x.b)), x.z)]);
       } else {
-        rows.push(["I" + x.a + "–" + x.b, C.div(C.sub(vv(x.a), vv(x.b)), x.z)]);
+        rows.push(["Current " + x.a + "–" + x.b, C.div(C.sub(vv(x.a), vv(x.b)), x.z)]);
       }
     });
   }
@@ -696,7 +706,7 @@ $("s2").onclick = () => setSeq("abc", "100∠0", "100∠-120", "100∠120");
 $("s3").onclick = () => setSeq("seq", "10∠30", "10∠30", "10∠30");
 $("zgo").onclick = () => guard("m5", () => {
   const s = parseC($("zs").value), m = parseC($("zm").value);
-  $("zout").innerHTML = T([["Z0 = Zs + 2Zm", C.add(s, C.k(2, m))], ["Z1 = Zs − Zm", C.sub(s, m)], ["Z2 = Zs − Zm", C.sub(s, m)]]);
+  $("zout").innerHTML = T([["Zero Sequence = Self Impedance + 2 × Mutual Impedance", C.add(s, C.k(2, m))], ["Positive Sequence = Self Impedance − Mutual Impedance", C.sub(s, m)], ["Negative Sequence = Self Impedance − Mutual Impedance", C.sub(s, m)]]);
 });
 
 /* ===== Fault formulas ===== */
@@ -721,17 +731,17 @@ $("ggo").onclick = () => guard("m6", () => {
   const r = faultCalc($("ft").value, parseC($("gV").value), parseC($("g1").value), parseC($("g2").value), parseC($("g0").value), parseC($("gf").value));
   const Sb = gv("gS"), kv = gv("gk"), Ib = Sb/(S3*kv)*1000, ph = toAbc(r.I), vp = toAbc(r.V);
   $("gout").innerHTML = T([
-    {h: "Sequence quantities"}, ["Ia0", r.I[0]], ["Ia1", r.I[1]], ["Ia2", r.I[2]], ["Va0", r.V[0]], ["Va1", r.V[1]], ["Va2", r.V[2]],
-    {h: "Phase currents (base current " + Ib.toFixed(2) + " A)"}, ["Ia", ph[0], Ib, "A"], ["Ib", ph[1], Ib, "A"], ["Ic", ph[2], Ib, "A"],
-    {h: "Phase voltages at fault (line-to-neutral)"}, ["Va", vp[0], kv/S3, "kV"], ["Vb", vp[1], kv/S3, "kV"], ["Vc", vp[2], kv/S3, "kV"]
+    {h: "Sequence quantities"}, ["Zero Sequence Current a", r.I[0]], ["Positive Sequence Current a", r.I[1]], ["Negative Sequence Current a", r.I[2]], ["Zero Sequence Voltage a", r.V[0]], ["Positive Sequence Voltage a", r.V[1]], ["Negative Sequence Voltage a", r.V[2]],
+    {h: "Phase currents (base current " + Ib.toFixed(2) + " Amperes)"}, ["Current a", ph[0], Ib, "Amperes"], ["Current b", ph[1], Ib, "Amperes"], ["Current c", ph[2], Ib, "Amperes"],
+    {h: "Phase voltages at fault (line-to-neutral)"}, ["Voltage a", vp[0], kv/S3, "Kilovolts"], ["Voltage b", vp[1], kv/S3, "Kilovolts"], ["Voltage c", vp[2], kv/S3, "Kilovolts"]
   ]);
 });
 
 /* ---- Question Solvers ---- */
 (function() {
   const D = { G1: [.25, .25, .05], G2: [.2, .2, .05], T1: [.06, .06, .06], T2: [.07, .07, .07], L1: [.1, .1, .3], L2: [.1, .1, .3] };
-  const N = { G1: "G1", G2: "G2", T1: "T1", T2: "T2", L1: "Line 1", L2: "Line 2" };
-  $("eq").innerHTML = '<tr><th class="!bg-slate-100 border-b border-slate-200">Equipment</th><th class="!bg-slate-100 border-b border-slate-200">X1 (pu)</th><th class="!bg-slate-100 border-b border-slate-200">X2 (pu)</th><th class="!bg-slate-100 border-b border-slate-200">X0 (pu)</th></tr>' + 
+  const N = { G1: "Generator 1", G2: "Generator 2", T1: "Transformer 1", T2: "Transformer 2", L1: "Line 1", L2: "Line 2" };
+  $("eq").innerHTML = '<tr><th class="!bg-slate-100 border-b border-slate-200">Equipment</th><th class="!bg-slate-100 border-b border-slate-200">Positive Sequence (per unit)</th><th class="!bg-slate-100 border-b border-slate-200">Negative Sequence (per unit)</th><th class="!bg-slate-100 border-b border-slate-200">Zero Sequence (per unit)</th></tr>' + 
   Object.keys(D).map(k => "<tr><td class='font-medium bg-slate-50 border-b border-slate-100'>" + N[k] + "</td>" + [1, 2, 0].map((s, i) => '<td class="border-b border-slate-100"><input class="!w-20 !py-1 !text-center mx-auto" id="' + k + '_' + s + '" value="' + D[k][i] + '"></td>').join("") + "</tr>").join("");
 })();
 
@@ -757,29 +767,29 @@ $("go4").onclick = () => guard("m7", () => {
   const I1s = rot(I1g), V1s = rot(V1g), pI2 = toAbc(I2g), pV2 = toAbc(V2g), pI1 = toAbc(I1s), pV1 = toAbc(V1s);
   const ln = kg/S3, lh = kh/S3, nm = ["a", "b", "c"], R = [];
   
-  R.push({h: "Equivalent sequence impedances at bus 2"}, ["Z1 (G1+T1) ∥ (Line1∥Line2 + T2 + G2)", Zs[1]], ["Z2", Zs[2]], ["Z0 = T1 ∥ (Line1∥Line2 + T2 + G2 + 3Xn)", Zs[0]]);
-  R.push({h: "(a) Fault current"}, ["Ia0", f.I[0]], ["Ia1", f.I[1]], ["Ia2", f.I[2]]);
-  nm.forEach((n,i) => R.push(["I"+n+" (base "+IbH.toFixed(2)+" A)", pH[i], IbH, "A"]));
+  R.push({h: "Equivalent sequence impedances at bus 2"}, ["Positive Sequence (Generator 1+Transformer 1) ∥ (Line 1∥Line 2 + Transformer 2 + Generator 2)", Zs[1]], ["Negative Sequence", Zs[2]], ["Zero Sequence = Transformer 1 ∥ (Line 1∥Line 2 + Transformer 2 + Generator 2 + 3 × Neutral Reactance)", Zs[0]]);
+  R.push({h: "(a) Fault current"}, ["Zero Sequence Current a", f.I[0]], ["Positive Sequence Current a", f.I[1]], ["Negative Sequence Current a", f.I[2]]);
+  nm.forEach((n,i) => R.push(["Current "+n+" (base "+IbH.toFixed(2)+" Amperes)", pH[i], IbH, "Amperes"]));
   
   R.push({h: "(b) Line-to-neutral voltages at the fault point"});
-  nm.forEach((n,i) => R.push(["V"+n, vH[i], lh, "kV"]));
+  nm.forEach((n,i) => R.push(["Voltage "+n, vH[i], lh, "Kilovolts"]));
   
-  R.push({h: "(c) Generator G2 terminals (no phase shift, T2 is Yg–Yg)"}, ["Sequence currents Ia0 | Ia1 | Ia2", fr(I2g[0])+"  |  "+fr(I2g[1])+"  |  "+fr(I2g[2])]);
-  nm.forEach((n,i) => R.push(["I"+n+" (base "+IbG.toFixed(2)+" A)", pI2[i], IbG, "A"]));
-  nm.forEach((n,i) => R.push(["V"+n, pV2[i], ln, "kV"]));
+  R.push({h: "(c) Generator 2 terminals (no phase shift, Transformer 2 is Star-Star)"}, ["Sequence currents Zero | Positive | Negative", fr(I2g[0])+"  |  "+fr(I2g[1])+"  |  "+fr(I2g[2])]);
+  nm.forEach((n,i) => R.push(["Current "+n+" (base "+IbG.toFixed(2)+" Amperes)", pI2[i], IbG, "Amperes"]));
+  nm.forEach((n,i) => R.push(["Voltage "+n, pV2[i], ln, "Kilovolts"]));
   
-  R.push({h: "(c) Generator G1 terminals (after Δ–Y shift: +seq −30°, −seq +30°, zero seq blocked)"});
-  nm.forEach((n,i) => R.push(["I"+n, pI1[i], IbG, "A"]));
-  nm.forEach((n,i) => R.push(["V"+n, pV1[i], ln, "kV"]));
+  R.push({h: "(c) Generator 1 terminals (after Delta–Star shift: positive sequence −30°, negative sequence +30°, zero sequence blocked)"});
+  nm.forEach((n,i) => R.push(["Current "+n, pI1[i], IbG, "Amperes"]));
+  nm.forEach((n,i) => R.push(["Voltage "+n, pV1[i], ln, "Kilovolts"]));
   
-  $("o4").innerHTML = T(R) + '<p class="note"><strong>Slide comparison (LG, Zf = 0):</strong> The slide rounds Z1 = Z2 = j0.157, giving 2.74 pu; unrounded values give 2.73 pu, so small differences are expected. In the slide, Ib at G1 is printed as 2.40∠270°; the computed angle is 90° (Ia = 2.40∠270°, Ic = 0). The slide also writes 0.566 for the G1 Va and Vb magnitudes, while 0.556 pu is what its matrix result gives.</p>';
+  $("o4").innerHTML = T(R) + '<p class="note"><strong>Slide comparison (Line-to-Ground, Fault Impedance = 0):</strong> The slide rounds Positive Sequence = Negative Sequence = j0.157, giving 2.74 per unit; unrounded values give 2.73 per unit, so small differences are expected. In the slide, base current at Generator 1 is printed as 2.40∠270°; the computed angle is 90° (Current a = 2.40∠270°, Current c = 0). The slide also writes 0.566 for the Generator 1 Voltage a and Voltage b magnitudes, while 0.556 per unit is what its matrix result gives.</p>';
 });
 
 /* ===== radial pu problems ===== */
-mk("f1", [["a_S", "Base MVA", 100], ["a_kg", "kV gen", 11], ["a_kl", "kV line", 33], ["a_kc", "kV cable", 6.6],
- ["a_g1", "G1 MVA", 10], ["a_g1x", "G1 X %", 15], ["a_g2", "G2 MVA", 10], ["a_g2x", "G2 X %", 12.5],
- ["a_t1", "T1 MVA", 10], ["a_t1x", "T1 X %", 10], ["a_t2", "T2 MVA", 5], ["a_t2x", "T2 X %", 8],
- ["a_ll", "Line km", 30], ["a_lr", "r Ω/km", 0.27], ["a_lx", "x Ω/km", 0.36], ["a_cl", "Cable km", 3], ["a_cr", "r Ω/km", 0.135], ["a_cx", "x Ω/km", 0.08]]);
+mk("f1", [["a_S", "Base Megavolt-Amperes", 100], ["a_kg", "Kilovolts Generator", 11], ["a_kl", "Kilovolts Line", 33], ["a_kc", "Kilovolts Cable", 6.6],
+ ["a_g1", "Generator 1 Megavolt-Amperes", 10], ["a_g1x", "Generator 1 Reactance %", 15], ["a_g2", "Generator 2 Megavolt-Amperes", 10], ["a_g2x", "Generator 2 Reactance %", 12.5],
+ ["a_t1", "Transformer 1 Megavolt-Amperes", 10], ["a_t1x", "Transformer 1 Reactance %", 10], ["a_t2", "Transformer 2 Megavolt-Amperes", 5], ["a_t2x", "Transformer 2 Reactance %", 8],
+ ["a_ll", "Line Kilometers", 30], ["a_lr", "Resistance Ohms/Kilometer", 0.27], ["a_lx", "Reactance Ohms/Kilometer", 0.36], ["a_cl", "Cable Kilometers", 3], ["a_cr", "Resistance Ohms/Kilometer", 0.135], ["a_cx", "Reactance Ohms/Kilometer", 0.08]]);
 
 $("go1").onclick = () => guard("m8", () => {
   const S = gv("a_S"), pu = (m,p) => J(p/100*S/m);
@@ -792,18 +802,18 @@ $("go1").onclick = () => guard("m8", () => {
   
   $("o1").innerHTML = T([
     {h: "Question 2 Results"},
-    ["Z_total (pu)", Ztot],
-    ["I_sc (pu)", Isc],
-    ["I_sc (Actual)", Isc, Ib, "A"],
-    ["V at 11kV bus (pu)", V11],
-    ["V at 11kV bus (Actual)", V11, gv("a_kg")/S3, "kV (L-N)"]
+    ["Total Impedance (per unit)", Ztot],
+    ["Short Circuit Current (per unit)", Isc],
+    ["Short Circuit Current (Actual)", Isc, Ib, "Amperes"],
+    ["Voltage at 11 Kilovolts bus (per unit)", V11],
+    ["Voltage at 11 Kilovolts bus (Actual)", V11, gv("a_kg")/S3, "Kilovolts (Line-to-Neutral)"]
   ]);
 });
 
-mk("f2", [["b_S", "Base MVA", 25], ["b_G", "Gen MVA", 25], ["b_Gx", "Gen Xd'' %", 20],
- ["b_t1", "T1 MVA", 25], ["b_t1x", "T1 X %", 10], ["b_t2", "T2 MVA", 25], ["b_t2x", "T2 X %", 10],
- ["b_lx", "Line X %", 15], ["b_m", "Motor MVA", 5], ["b_mx2", "Motor Xd'' %", 25], ["b_mx1", "Motor Xd' %", 30],
- ["b_kv", "Motor kV", 6.6]]);
+mk("f2", [["b_S", "Base Megavolt-Amperes", 25], ["b_G", "Generator Megavolt-Amperes", 25], ["b_Gx", "Generator Reactance %", 20],
+ ["b_t1", "Transformer 1 Megavolt-Amperes", 25], ["b_t1x", "Transformer 1 Reactance %", 10], ["b_t2", "Transformer 2 Megavolt-Amperes", 25], ["b_t2x", "Transformer 2 Reactance %", 10],
+ ["b_lx", "Line Reactance %", 15], ["b_m", "Motor Megavolt-Amperes", 5], ["b_mx2", "Motor Subtransient Reactance %", 25], ["b_mx1", "Motor Transient Reactance %", 30],
+ ["b_kv", "Motor Kilovolts", 6.6]]);
 
 $("go2").onclick = () => guard("m9", () => {
   const S = gv("b_S"), pu = (m,p) => J(p/100*S/m);
@@ -819,20 +829,20 @@ $("go2").onclick = () => guard("m9", () => {
   
   $("o2").innerHTML = T([
     {h: "Question 3 Results"},
-    ["(a) Subtransient I_sc in fault (pu)", Isc_pu],
-    ["(a) Actual I_sc", Isc_pu, Ib, "A"],
-    ["(b) Subtransient I_sc in breaker B (pu)", IscB_pu],
-    ["(b) Actual I_sc in breaker B", IscB_pu, Ib, "A"],
-    ["(c) Momentary current in B (1.6 * I_sc_B)", IscB_pu, Ib*1.6, "A"],
-    ["(d) Interrupted current (pu, using Xd')", IintB_pu],
-    ["(d) Actual Interrupted current ("+bs+" multiplier)", IintB_pu, Ib*bs, "A"]
+    ["(a) Subtransient Short Circuit Current in fault (per unit)", Isc_pu],
+    ["(a) Actual Short Circuit Current", Isc_pu, Ib, "Amperes"],
+    ["(b) Subtransient Short Circuit Current in breaker B (per unit)", IscB_pu],
+    ["(b) Actual Short Circuit Current in breaker B", IscB_pu, Ib, "Amperes"],
+    ["(c) Momentary current in B (1.6 × Short Circuit Current in B)", IscB_pu, Ib*1.6, "Amperes"],
+    ["(d) Interrupted current (per unit, using Transient Reactance)", IintB_pu],
+    ["(d) Actual Interrupted current ("+bs+" multiplier)", IintB_pu, Ib*bs, "Amperes"]
   ]);
 });
 
-mk("f3", [["c_S", "Base MVA", 25], ["c_kv", "Gen/Motor kV", 11],
- ["c_g", "Gen Xd'' %", 15], ["c_m", "Motor Xd'' %", 15],
- ["c_t1", "T1 X %", 10], ["c_t2", "T2 X %", 10], ["c_l", "Line X %", 10],
- ["c_mw", "Load MW", 15], ["c_pf", "Power Factor", 0.8], ["c_v", "Prefault kV", 10.6]]);
+mk("f3", [["c_S", "Base Megavolt-Amperes", 25], ["c_kv", "Generator/Motor Kilovolts", 11],
+ ["c_g", "Generator Reactance %", 15], ["c_m", "Motor Reactance %", 15],
+ ["c_t1", "Transformer 1 Reactance %", 10], ["c_t2", "Transformer 2 Reactance %", 10], ["c_l", "Line Reactance %", 10],
+ ["c_mw", "Load Megawatts", 15], ["c_pf", "Power Factor", 0.8], ["c_v", "Prefault Kilovolts", 10.6]]);
 
 $("go3").onclick = () => guard("m10", () => {
   const S = gv("c_S"), kv = gv("c_kv"), V0 = gv("c_v")/kv;
@@ -845,24 +855,24 @@ $("go3").onclick = () => guard("m10", () => {
   const Zg_net = sum(Xg, Xnet);
   
   const Eg = C.add([V0,0], C.mul(I0, Zg_net));
-  const Em = C.sub([V0,0], C.mul(I0, Xm));  
-                               
+  const Em = C.sub([V0,0], C.mul(I0, Xm));
+  
   const Ig = C.div(Eg, Zg_net), Im = C.div(Em, Xm);
   const If = sum(Ig, Im);
   const Ib = S*1000/(S3*kv);
   
   $("o3").innerHTML = T([
     {h: "Question 4 Results"},
-    ["Prefault Voltage V0 (pu)", [V0,0]],
-    ["Prefault Current I0 (pu)", I0],
-    ["E_g'' (pu)", Eg],
-    ["E_m'' (pu)", Em],
-    ["(a) Subtransient I_g'' (pu)", Ig],
-    ["(a) Actual I_g''", Ig, Ib, "A"],
-    ["(b) Subtransient I_m'' (pu)", Im],
-    ["(b) Actual I_m''", Im, Ib, "A"],
-    ["(c) Fault current I_f (pu)", If],
-    ["(c) Actual I_f", If, Ib, "A"]
+    ["Prefault Voltage (per unit)", [V0,0]],
+    ["Prefault Current (per unit)", I0],
+    ["Subtransient Generator Voltage (per unit)", Eg],
+    ["Subtransient Motor Voltage (per unit)", Em],
+    ["(a) Subtransient Generator Current (per unit)", Ig],
+    ["(a) Actual Subtransient Generator Current", Ig, Ib, "Amperes"],
+    ["(b) Subtransient Motor Current (per unit)", Im],
+    ["(b) Actual Subtransient Motor Current", Im, Ib, "Amperes"],
+    ["(c) Fault current (per unit)", If],
+    ["(c) Actual Fault current", If, Ib, "Amperes"]
   ]);
 });
 
