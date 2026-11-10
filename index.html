@@ -2,488 +2,796 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Group 4 Power Systems Assignment 4</title>
-<style>
-:root{--bg:#f3f5f7;--panel:#fff;--ink:#14202b;--mute:#5c6b78;--line:#cdd6de;--accent:#0b6e8a;--ai:#fff;--warn:#b3261e;--cell:#eef3f6}
-@media (prefers-color-scheme:dark){:root{--bg:#10171d;--panel:#18222b;--ink:#e6edf2;--mute:#93a3b0;--line:#2c3a46;--accent:#4cc3e0;--ai:#06222b;--warn:#ff8a80;--cell:#1f2c37}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,sans-serif;padding:16px}
-main{max-width:1150px;margin:0 auto;display:grid;gap:14px}
-h1{font-size:1.45rem;margin:0}h2{font-size:1.05rem;margin:0 0 8px}h3{font-size:.95rem;margin:14px 0 6px}
-.sub{margin:4px 0 0;color:var(--mute)}
-section.card,.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
-label{display:block;font-size:.8rem;color:var(--mute);margin-bottom:2px}
-input,select,textarea,button{font:inherit;color:inherit}
-input,select,textarea{background:var(--cell);border:1px solid var(--line);border-radius:5px;padding:5px 7px;min-width:0}
-textarea{width:100%;font-family:Consolas,monospace;font-size:.85rem}
-input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-button{background:var(--accent);color:var(--ai);border:0;border-radius:5px;padding:7px 12px;cursor:pointer;font-weight:600}
-button.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
-button.tab{background:transparent;color:var(--ink);border:1px solid var(--line)}
-button.tab.on{background:var(--accent);color:var(--ai);border-color:var(--accent)}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
-.row input{width:105px}
-.wrap{overflow-x:auto;margin-top:8px}
-table{border-collapse:collapse}
-td,th{padding:3px 6px;text-align:left}
-th{color:var(--mute);font-weight:600;font-size:.8rem}
-.inp td input{width:100px;text-align:center}
-.out td.v,.res td,.res th{border:1px solid var(--line)}
-.out td.v{background:var(--cell);text-align:center;font-family:Consolas,monospace;font-size:.85rem;white-space:nowrap;padding:5px 9px}
-.res{font-size:.88rem;margin-top:6px}.res td{font-family:Consolas,monospace;white-space:nowrap}.res td:first-child{font-family:inherit}
-.res tr.h td{background:var(--cell);font-family:inherit;font-weight:600}
-.msg{color:var(--warn);min-height:1.2em;margin-top:6px}
-.note{color:var(--mute);font-size:.85rem;margin-top:6px}
-.q{color:var(--mute);font-size:.88rem;margin:0 0 8px}
-#log{margin:0;padding-left:20px;color:var(--mute)}
-.hidden{display:none}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style type="text/tailwindcss">
+  @layer base {
+    body { font-family: 'Inter', sans-serif; @apply bg-slate-50 text-slate-800 antialiased min-h-screen pb-12; }
+    h1 { @apply text-2xl font-bold text-slate-900 tracking-tight; }
+    h2 { @apply text-lg font-semibold text-slate-900 mb-5 border-b border-slate-100 pb-3; }
+    h3 { @apply text-base font-semibold text-slate-800 mt-8 mb-4; }
+  }
+
+  @layer components {
+    .card { @apply bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 mb-6 transition-shadow hover:shadow-md; }
+    
+    label { @apply block text-sm font-medium text-slate-700 mb-1.5; }
+    input, select, textarea { @apply block w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:border-blue-600 focus:ring-blue-600 focus:outline-none shadow-sm transition-colors bg-white; }
+    textarea { @apply font-mono text-sm leading-relaxed; }
+    
+    button { @apply inline-flex justify-center items-center rounded-lg border border-transparent bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all active:scale-95; }
+    button.alt { @apply bg-white border-slate-300 text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900 focus:ring-slate-300; }
+    
+    /* Layout */
+    .row { @apply flex flex-wrap items-end gap-5 w-full; }
+    .row > div { @apply flex-auto min-w-[120px] max-w-[300px]; }
+    
+    /* Tables */
+    .wrap { @apply overflow-x-auto mt-2 rounded-xl border border-slate-200 bg-white shadow-sm; }
+    table { @apply min-w-full divide-y divide-slate-200; }
+    th { @apply bg-slate-50 px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider; }
+    td { @apply px-4 py-3 text-sm text-slate-700 whitespace-nowrap; }
+    
+    /* Specific target styles for JS-injected elements */
+    .inp td input { @apply w-28 text-center px-2 py-1.5 font-mono text-sm mx-auto; }
+    .out td.v { @apply font-mono bg-slate-50/50 text-center border-l border-slate-100; }
+    
+    .res { @apply min-w-full divide-y divide-slate-200 text-sm mt-4 border border-slate-200 rounded-lg overflow-hidden; }
+    .res th { @apply bg-slate-100 font-semibold text-slate-700 uppercase text-xs tracking-wider border-b border-slate-200 py-3 px-4; }
+    .res td { @apply px-4 py-3 whitespace-nowrap border-b border-slate-100 font-mono text-slate-800; font-family: 'JetBrains Mono', monospace; }
+    .res td:first-child { @apply font-sans font-medium text-slate-700 bg-slate-50/50; }
+    .res tr.h td { @apply bg-slate-100 font-sans font-semibold text-slate-900 py-3 px-4 border-y border-slate-200 shadow-sm; }
+    
+    /* Utility & Status indicators */
+    .msg { @apply text-red-600 text-sm mt-3 font-medium min-h-[1.5em] flex items-center; }
+    .msg:not(:empty)::before { content: "⚠"; @apply mr-2 text-lg; }
+    
+    .note { @apply text-slate-600 text-sm mt-4 bg-slate-50 p-4 rounded-lg border border-slate-200 flex items-start; }
+    .note::before { content: "ℹ"; @apply mr-2 text-blue-500 font-bold text-base leading-none mt-0.5; }
+    
+    .q { @apply text-slate-800 text-sm mb-6 bg-blue-50/50 p-5 rounded-lg border border-blue-100 leading-relaxed font-medium shadow-sm; }
+    
+    #log { @apply mt-4 pl-6 text-sm text-slate-700 font-mono list-decimal space-y-2 bg-slate-50 p-5 rounded-lg border border-slate-200 max-h-64 overflow-y-auto; }
+    #log li::marker { @apply text-slate-400; }
+  }
+  
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
-<main>
-<header>
-  <h1>Group 4 Power Systems Assignment 4</h1>
-  <p class="sub">Z-bus modification, sequence components, unsymmetrical faults and worked problems. Complex input: <code>j0.25</code>, <code>0.1+j0.4</code>, <code>0.1-0.4j</code> or polar <code>110∠0</code>. Bus 0 is the reference.</p>
-  <div class="row" style="margin-top:8px">
-    <button class="tab on" data-t="t1">Generalized Interface</button>
-    <button class="tab" data-t="t2">Solved Questions</button>
-    <label style="margin:0 0 0 auto">Decimals <input id="dec" type="number" min="0" max="8" value="4" style="width:55px"></label>
+
+<!-- Header & Global Navigation -->
+<div class="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
+  <div class="max-w-6xl mx-auto px-6 pt-6">
+    <header class="mb-4">
+      <h1>Power Systems Assignment 4</h1>
+      <p class="text-sm text-slate-500 mt-2 max-w-3xl">Z-bus modification, sequence components, unsymmetrical faults and worked problems. Complex input formats: <code>j0.25</code>, <code>0.1+j0.4</code>, <code>0.1-0.4j</code> or polar <code>110∠0</code>. Bus 0 is strictly the reference bus.</p>
+    </header>
+
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mt-6">
+      <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs" id="tabs-container">
+        <!-- Tabs generated/managed by JS for consistency -->
+        <button class="tab-btn whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm transition-colors border-blue-600 text-blue-600" data-t="t1">Generalized Interface</button>
+        <button class="tab-btn whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm transition-colors border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" data-t="t2">Solved Questions</button>
+      </nav>
+      
+      <div class="pb-3 mt-4 sm:mt-0 flex items-center bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+        <label for="dec" class="!mb-0 text-sm font-medium text-slate-700 flex items-center">
+          Decimals
+          <input id="dec" type="number" min="0" max="8" value="4" class="ml-3 w-16 px-2 py-1 text-center font-mono !min-h-0 bg-white">
+        </label>
+      </div>
+    </div>
   </div>
-</header>
+</div>
+
+<main class="max-w-6xl mx-auto px-6 py-8">
 
 <!-- ============ TAB 1: GENERALIZED INTERFACE ============ -->
-<div id="t1" class="tab-body" style="display:grid;gap:14px">
+<div id="t1" class="tab-body flex flex-col gap-6 w-full">
   
-  <!-- Z-bus Builder Tools -->
   <section class="card">
-    <h2>1. Initial Z-bus</h2>
+    <h2>1. Initial Z-bus Configuration</h2>
     <div class="row">
-      <div><label for="n">Number of buses N (0 = empty network)</label><input id="n" type="number" min="0" max="30" value="3"></div>
-      <button id="mk">Create matrix grid</button>
-      <button id="load" class="alt">Use entered matrix</button>
-      <button id="sym" class="alt">Mirror upper to lower</button>
+      <div>
+        <label for="n">Number of buses N <span class="text-slate-400 font-normal ml-1">(0 = empty)</span></label>
+        <input id="n" type="number" min="0" max="30" value="3">
+      </div>
+      <div class="flex gap-3 !flex-none mt-2">
+        <button id="mk">Create Matrix Grid</button>
+        <button id="load" class="alt">Load Entered Matrix</button>
+        <button id="sym" class="alt">Mirror (Upper to Lower)</button>
+      </div>
     </div>
     <div class="wrap"><table class="inp" id="inp"></table></div>
     <div class="msg" id="m1"></div>
   </section>
 
   <section class="card">
-    <h2>2. Topology change</h2>
-    <div class="row">
-      <div><label for="type">Type of change</label>
-        <select id="type" style="width:auto">
-          <option value="1">Type 1: new bus p to reference</option>
-          <option value="2">Type 2: new bus p to existing bus k</option>
-          <option value="3">Type 3: existing bus k to reference</option>
-          <option value="4">Type 4: existing bus j to existing bus k</option>
-          <option value="5">Type 5: change or remove branch j–k</option>
-        </select></div>
-      <div id="fP"><label for="p">New bus p</label><input id="p" type="number" style="width:70px"></div>
-      <div id="fJ"><label for="j">From bus j</label><input id="j" type="number" min="0" style="width:70px" value="1"></div>
-      <div id="fK"><label for="k">To bus k</label><input id="k" type="number" min="0" style="width:70px" value="0"></div>
-      <div id="fZ"><label for="z">Branch impedance Zb</label><input id="z" value="j0.2"></div>
+    <h2>2. Topology Modification</h2>
+    <div class="row items-end">
+      <div class="!max-w-[320px]">
+        <label for="type">Type of network change</label>
+        <select id="type">
+          <option value="1">Type 1: New bus p to reference</option>
+          <option value="2">Type 2: New bus p to existing bus k</option>
+          <option value="3">Type 3: Existing bus k to reference</option>
+          <option value="4">Type 4: Existing bus j to existing bus k</option>
+          <option value="5">Type 5: Change or remove branch j–k</option>
+        </select>
+      </div>
+      <div id="fP" class="!max-w-[100px]"><label for="p">New bus p</label><input id="p" type="number"></div>
+      <div id="fJ" class="!max-w-[100px]"><label for="j">From bus j</label><input id="j" type="number" min="0" value="1"></div>
+      <div id="fK" class="!max-w-[100px]"><label for="k">To bus k</label><input id="k" type="number" min="0" value="0"></div>
+      <div id="fZ"><label for="z">Branch impedance (Zb)</label><input id="z" value="j0.2"></div>
       <div id="fZo" class="hidden"><label for="zo">Old impedance</label><input id="zo" value="j0.2"></div>
-      <div id="fZn" class="hidden"><label for="zn">New (blank = remove)</label><input id="zn"></div>
-      <button id="apply">Apply change</button>
-      <button id="undo" class="alt">Undo last</button>
+      <div id="fZn" class="hidden"><label for="zn">New impedance (blank = remove)</label><input id="zn"></div>
+      
+      <div class="flex gap-3 !flex-none w-full sm:w-auto mt-2">
+        <button id="apply" class="w-full sm:w-auto">Apply Change</button>
+        <button id="undo" class="alt w-full sm:w-auto">Undo Last</button>
+      </div>
     </div>
     <div class="note" id="hint"></div>
     <div class="msg" id="m2"></div>
   </section>
 
   <section class="card">
-    <h2>3. Current Z-bus <span id="dim" style="color:var(--mute);font-weight:400"></span>
-      <select id="fmt" style="margin-left:10px;width:auto"><option value="rect">a + jb</option><option value="polar">magnitude ∠ angle</option></select></h2>
-    <div class="wrap"><table class="out" id="out"></table></div>
-    <h3>Change history</h3>
-    <ol id="log"><li>No changes yet.</li></ol>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-5 gap-4">
+      <h2 class="!border-none !pb-0 !mb-0 flex items-center gap-3">
+        3. Current Z-bus Matrix 
+        <span id="dim" class="bg-blue-100 text-blue-800 text-xs py-1 px-2 rounded font-mono"></span>
+      </h2>
+      <select id="fmt" class="w-auto !py-1.5 !text-sm border-slate-200">
+        <option value="rect">Format: a + jb</option>
+        <option value="polar">Format: magnitude ∠ angle</option>
+      </select>
+    </div>
+    <div class="wrap"><table class="out w-full" id="out"></table></div>
+    
+    <h3>Modification Log</h3>
+    <ol id="log"><li>No changes applied yet.</li></ol>
   </section>
 
   <section class="card">
-    <h2>4. Network branch list: Ybus and Zbus by inversion</h2>
-    <p class="q">One branch per line: <code>from to Z [E]</code>. Use bus 0 for the reference. An optional fourth value E marks a source branch (EMF in pu in series with Z), used only for branch currents.</p>
-    <textarea id="br" rows="7" spellcheck="false">1 0 0.6
+    <h2>4. Network Branch List & Y-bus Inversion</h2>
+    <p class="q">Enter branches in the format: <code>from to Z [E]</code>. Use bus <code>0</code> for the reference. An optional fourth value <code>E</code> designates a source branch (EMF in pu in series with Z), which is utilized solely for branch current calculations.</p>
+    <textarea id="br" rows="6" spellcheck="false" class="p-4 bg-slate-900 text-slate-100 border-none rounded-lg shadow-inner">1 0 0.6
 2 0 0.5
 2 3 0.5
 1 3 0.25</textarea>
-    <div class="row" style="margin-top:8px"><button id="byb">Build Zbus = inverse of Ybus</button></div>
+    <div class="row mt-4">
+      <button id="byb">Compute Z-bus (Inverse of Y-bus)</button>
+    </div>
     <div class="msg" id="m3"></div>
-    <div class="wrap"><table class="out" id="yb"></table></div>
+    <div class="wrap mt-4"><table class="out" id="yb"></table></div>
   </section>
 
   <!-- Sequence Components Tools -->
   <section class="card">
-    <h2>Sequence components (Fortescue), a = 1∠120°</h2>
-    <div class="row">
-      <button id="s1" class="alt">Preset: voltages 110∠0, 88∠−100, 80∠175 (abc → 012)</button>
-      <button id="s2" class="alt">Preset: balanced currents 100 A (abc → 012)</button>
-      <button id="s3" class="alt">Preset: Ia0 = Ia1 = Ia2 = 10∠30° (012 → abc)</button>
+    <h2>5. Sequence Components (Fortescue), a = 1∠120°</h2>
+    <div class="flex flex-wrap gap-3 mb-6">
+      <button id="s1" class="alt text-xs">Preset: V = 110∠0, 88∠-100, 80∠175 (abc → 012)</button>
+      <button id="s2" class="alt text-xs">Preset: Balanced 100A (abc → 012)</button>
+      <button id="s3" class="alt text-xs">Preset: Ia0 = Ia1 = Ia2 = 10∠30° (012 → abc)</button>
     </div>
-    <div class="row" style="margin-top:10px">
-      <div><label for="sm">Direction</label><select id="sm" style="width:auto"><option value="abc">abc → 012</option><option value="seq">012 → abc</option></select></div>
+    <div class="row items-end bg-slate-50 p-5 rounded-lg border border-slate-200">
+      <div class="!max-w-[160px]">
+        <label for="sm">Conversion Direction</label>
+        <select id="sm">
+          <option value="abc">abc → 012</option>
+          <option value="seq">012 → abc</option>
+        </select>
+      </div>
       <div><label for="sx" id="lx">Va</label><input id="sx" value="110∠0"></div>
       <div><label for="sy" id="ly">Vb</label><input id="sy" value="88∠-100"></div>
       <div><label for="sz" id="lz">Vc</label><input id="sz" value="80∠175"></div>
-      <button id="sgo">Convert</button>
+      <div class="!flex-none"><button id="sgo" class="w-full">Convert Components</button></div>
     </div>
-    <div class="msg" id="m5"></div><div id="sout"></div>
-    <h3>Transposed line: sequence impedances</h3>
-    <div class="row">
-      <div><label for="zs">Zs (self)</label><input id="zs" value="j0.5"></div>
-      <div><label for="zm">Zm (mutual)</label><input id="zm" value="j0.2"></div>
-      <button id="zgo" class="alt">Compute Z0, Z1, Z2</button>
+    <div class="msg" id="m5"></div>
+    <div id="sout" class="mt-4"></div>
+    
+    <div class="border-t border-slate-200 mt-8 pt-6">
+      <h3>Transposed Line Sequence Impedances</h3>
+      <div class="row items-end">
+        <div><label for="zs">Zs (Self Impedance)</label><input id="zs" value="j0.5"></div>
+        <div><label for="zm">Zm (Mutual Impedance)</label><input id="zm" value="j0.2"></div>
+        <div class="!flex-none"><button id="zgo" class="alt">Compute Z0, Z1, Z2</button></div>
+      </div>
+      <div id="zout" class="mt-4"></div>
+      <p class="note">Formulas: Z0 = Zs + 2Zm, Z1 = Z2 = Zs − Zm. <br>Phase-shift rule for Δ–Y transformers: Positive sequence on the star (HV) side leads the delta side by 30°; negative sequence lags by 30°.</p>
     </div>
-    <div id="zout"></div>
-    <p class="note">Z0 = Zs + 2Zm, Z1 = Z2 = Zs − Zm. Phase-shift rule for Δ–Y transformers: positive sequence on the star (HV) side leads the delta side by 30°; negative sequence lags by 30°.</p>
   </section>
 
   <!-- Fault Analysis Tools -->
   <section class="card">
-    <h2>Three-phase fault from the current Z-bus</h2>
-    <div class="row">
-      <div><label for="fb">Fault bus r</label><input id="fb" type="number" min="1" value="1" style="width:70px"></div>
-      <div><label for="fz">Fault impedance Zf</label><input id="fz" value="0"></div>
-      <div><label for="fv">Prefault voltage</label><input id="fv" value="1"></div>
-      <button id="fgo">Compute fault</button>
+    <h2>6. Three-Phase Fault (Using Current Z-bus)</h2>
+    <div class="row items-end">
+      <div class="!max-w-[120px]"><label for="fb">Fault bus (r)</label><input id="fb" type="number" min="1" value="1"></div>
+      <div><label for="fz">Fault impedance (Zf)</label><input id="fz" value="0"></div>
+      <div><label for="fv">Prefault voltage (V0)</label><input id="fv" value="1"></div>
+      <div class="!flex-none"><button id="fgo">Compute 3Φ Fault</button></div>
     </div>
     <div class="msg" id="m4"></div>
-    <div id="fout"></div>
-    <p class="note">If = V0 / (Zrr + Zf); Vi(f) = V0 − Zir·If. Branch currents use the branch list above. Prefault currents are taken as zero.</p>
+    <div id="fout" class="mt-4"></div>
+    <p class="note">If = V0 / (Zrr + Zf)  •  Vi(f) = V0 − Zir·If  •  Branch currents use the branch list defined in section 4. Prefault currents are assumed zero.</p>
   </section>
 
   <section class="card">
-    <h2>Unsymmetrical and symmetrical fault at one bus</h2>
-    <p class="q">Enter the Thevenin sequence impedances seen from the fault point (pu). Phase a is the reference; LL is between b and c; LLG is b–c–ground.</p>
-    <div class="row">
-      <div><label for="ft">Fault type</label><select id="ft" style="width:auto"><option value="LG">LG (a–g)</option><option value="LL">LL (b–c)</option><option value="LLG">LLG (b–c–g)</option><option value="LLL">LLL (3-phase)</option></select></div>
-      <div><label for="gV">Prefault V</label><input id="gV" value="1"></div>
-      <div><label for="g1">Z1</label><input id="g1" value="j0.157"></div>
-      <div><label for="g2">Z2</label><input id="g2" value="j0.157"></div>
-      <div><label for="g0">Z0</label><input id="g0" value="j0.051"></div>
-      <div><label for="gf">Zf</label><input id="gf" value="0"></div>
-      <div><label for="gS">Base MVA</label><input id="gS" value="250"></div>
-      <div><label for="gk">Base kV (L–L)</label><input id="gk" value="220"></div>
-      <button id="ggo">Solve</button>
+    <h2>7. Thevenin Equivalent Fault Solver</h2>
+    <p class="q">Enter the Thevenin sequence impedances seen from the fault point in per-unit (pu). Phase <i>a</i> is the reference. LL is between <i>b</i> and <i>c</i>. LLG is <i>b–c–ground</i>.</p>
+    <div class="row items-end bg-slate-50 p-5 rounded-lg border border-slate-200">
+      <div class="!max-w-[180px]">
+        <label for="ft">Fault Classification</label>
+        <select id="ft">
+          <option value="LG">Single Line-to-Ground (LG)</option>
+          <option value="LL">Line-to-Line (LL)</option>
+          <option value="LLG">Double Line-to-Ground (LLG)</option>
+          <option value="LLL">Three-Phase (LLL)</option>
+        </select>
+      </div>
+      <div class="!max-w-[100px]"><label for="gV">Prefault V</label><input id="gV" value="1"></div>
+      <div><label for="g1">Z1 (+ Seq)</label><input id="g1" value="j0.157"></div>
+      <div><label for="g2">Z2 (- Seq)</label><input id="g2" value="j0.157"></div>
+      <div><label for="g0">Z0 (0 Seq)</label><input id="g0" value="j0.051"></div>
+      <div class="!max-w-[100px]"><label for="gf">Zf</label><input id="gf" value="0"></div>
+      <div class="!max-w-[120px]"><label for="gS">Base MVA</label><input id="gS" value="250"></div>
+      <div class="!max-w-[120px]"><label for="gk">Base kV (L-L)</label><input id="gk" value="220"></div>
+      <div class="!flex-none w-full sm:w-auto"><button id="ggo" class="w-full">Solve Fault</button></div>
     </div>
-    <div class="msg" id="m6"></div><div id="gout"></div>
+    <div class="msg" id="m6"></div>
+    <div id="gout" class="mt-4"></div>
   </section>
 </div>
 
 <!-- ============ TAB 2: SOLVED QUESTIONS ============ -->
-<div id="t2" class="tab-body hidden" style="display:none;gap:14px">
+<div id="t2" class="tab-body hidden flex-col gap-6 w-full">
 
-  <section class="card">
-    <h2>Question 1: Fault at bus 2 of the G1–T1–Line1/2–T2–G2 system</h2>
-    <p class="q">Base 250 MVA, 11 kV on the generator side, 220 kV on the line side. T1 is Δ(G1 side)–Yg, T2 is Yg–Yg, G1 is Yg, G2 is Yg grounded through Xn. Find (a) fault current, (b) line-to-neutral voltages at the fault, (c) currents and voltages at the generator terminals.</p>
-    <div class="wrap"><table class="inp" id="eq"></table></div>
-    <div class="row" style="margin-top:8px">
-      <div><label for="xn">G2 neutral reactance Xn (pu)</label><input id="xn" value="0.03" style="width:90px"></div>
-      <div><label for="f4">Fault type</label><select id="f4" style="width:auto"><option value="LG">LG, phase a (as asked)</option><option value="LL">LL (b–c)</option><option value="LLG">LLG (b–c–g)</option><option value="LLL">LLL</option></select></div>
-      <div><label for="zf4">Zf</label><input id="zf4" value="0" style="width:80px"></div>
-      <div><label for="S4">Base MVA</label><input id="S4" value="250" style="width:80px"></div>
-      <div><label for="kg">kV (gen)</label><input id="kg" value="11" style="width:70px"></div>
-      <div><label for="kh">kV (line)</label><input id="kh" value="220" style="width:70px"></div>
-      <button id="go4">Solve</button>
+  <section class="card border-t-4 border-t-blue-600">
+    <h2>Question 1: Fault at bus 2 (G1–T1–Line1/2–T2–G2 System)</h2>
+    <p class="q text-sm"><strong>Scenario:</strong> Base 250 MVA, 11 kV on the generator side, 220 kV on the line side. T1 is Δ(G1 side)–Yg, T2 is Yg–Yg, G1 is Yg, G2 is Yg grounded through Xn. <br><br><strong>Find:</strong> (a) Fault current, (b) Line-to-neutral voltages at the fault, (c) Currents and voltages at the generator terminals.</p>
+    
+    <div class="wrap mb-5"><table class="inp !min-w-0" id="eq"></table></div>
+    
+    <div class="row items-end bg-slate-50 p-5 rounded-lg border border-slate-200">
+      <div><label for="xn">G2 Neutral Reactance Xn</label><input id="xn" value="0.03"></div>
+      <div class="!max-w-[200px]">
+        <label for="f4">Fault Type</label>
+        <select id="f4">
+          <option value="LG">LG, phase a (As Asked)</option>
+          <option value="LL">LL (b–c)</option>
+          <option value="LLG">LLG (b–c–g)</option>
+          <option value="LLL">LLL</option>
+        </select>
+      </div>
+      <div class="!max-w-[100px]"><label for="zf4">Fault Zf</label><input id="zf4" value="0"></div>
+      <div class="!max-w-[120px]"><label for="S4">Base MVA</label><input id="S4" value="250"></div>
+      <div class="!max-w-[100px]"><label for="kg">kV (Gen)</label><input id="kg" value="11"></div>
+      <div class="!max-w-[100px]"><label for="kh">kV (Line)</label><input id="kh" value="220"></div>
+      <div class="!flex-none"><button id="go4">Calculate Q1</button></div>
     </div>
     <div class="msg" id="m7"></div><div id="o4"></div>
   </section>
 
-  <section class="card">
-    <h2>Question 2: Radial network, 3-phase fault at F</h2>
+  <section class="card border-t-4 border-t-blue-500">
+    <h2>Question 2: Radial Network, 3-Phase Fault at F</h2>
     <p class="q">Find the fault current and the line voltage at the 11 kV bus during the fault.</p>
     <div class="row" id="f1"></div>
-    <div class="row" style="margin-top:8px"><button id="go1">Solve Question 2</button></div>
+    <div class="mt-6 border-t border-slate-100 pt-4 flex justify-end">
+      <button id="go1">Solve Question 2</button>
+    </div>
     <div class="msg" id="m8"></div><div id="o1"></div>
   </section>
   
-  <section class="card">
-    <h2>Question 3: Generator, transformers, line and three motors</h2>
+  <section class="card border-t-4 border-t-blue-500">
+    <h2>Question 3: Generator, Transformers, Line and Three Motors</h2>
     <p class="q">Fault at F (motor side of breaker B). Find (a) subtransient current in the fault, (b) subtransient current in breaker B, (c) momentary current in B, (d) current interrupted by B.</p>
     <div class="row" id="f2"></div>
-    <div class="row" style="margin-top:8px">
-      <div><label for="bs">Breaker speed</label><select id="bs" style="width:auto"><option value="1.0">8 cycle or slower (1.0)</option><option value="1.1" selected>5 cycles (1.1)</option><option value="1.2">3 cycles (1.2)</option><option value="1.4">2 cycles (1.4)</option></select></div>
-      <button id="go2">Solve Question 3</button></div>
+    <div class="mt-6 border-t border-slate-100 pt-4 row items-center justify-between">
+      <div class="!max-w-[250px]">
+        <label for="bs">Breaker Speed Factor</label>
+        <select id="bs">
+          <option value="1.0">8 cycle or slower (1.0x)</option>
+          <option value="1.1" selected>5 cycles (1.1x)</option>
+          <option value="1.2">3 cycles (1.2x)</option>
+          <option value="1.4">2 cycles (1.4x)</option>
+        </select>
+      </div>
+      <div class="!flex-none"><button id="go2">Solve Question 3</button></div>
+    </div>
     <div class="msg" id="m9"></div><div id="o2"></div>
   </section>
 
-  <section class="card">
-    <h2>Question 4: Generator and synchronous motor with prefault load</h2>
+  <section class="card border-t-4 border-t-blue-500">
+    <h2>Question 4: Generator and Synchronous Motor with Prefault Load</h2>
     <p class="q">Motor draws 15 MW at 0.8 pf leading, terminal 10.6 kV, symmetrical fault at motor terminals. Find the subtransient current in generator, motor and fault.</p>
     <div class="row" id="f3"></div>
-    <div class="row" style="margin-top:8px">
-      <div><label for="ld">Load power factor</label><select id="ld" style="width:auto"><option value="1">leading</option><option value="-1">lagging</option></select></div>
-      <button id="go3">Solve Question 4</button></div>
+    <div class="mt-6 border-t border-slate-100 pt-4 row items-center justify-between">
+      <div class="!max-w-[200px]">
+        <label for="ld">Load Power Factor Type</label>
+        <select id="ld">
+          <option value="1">Leading</option>
+          <option value="-1">Lagging</option>
+        </select>
+      </div>
+      <div class="!flex-none"><button id="go3">Solve Question 4</button></div>
+    </div>
     <div class="msg" id="m10"></div><div id="o3"></div>
   </section>
 
-  <section class="card">
-    <h2>Question 5: Build Z-bus of 4-bus system</h2>
-    <div class="row">
-      <button id="p4">Solve Question 5 (Build Z-bus)</button>
-      <button id="p4b" class="alt">Modify: Remove line 1–3</button>
+  <section class="card border-t-4 border-t-slate-700">
+    <h2>Question 5: Build Z-bus of 4-bus System</h2>
+    <p class="q mb-5">Zbus configuration for R–1 0.6, R–2 0.5, 2–3 0.5, 1–3 0.25 using sequential type links. Removing 1–3 is tested as a type-4 link of −0.25.</p>
+    <div class="flex gap-4">
+      <button id="p4">Solve Q5 (Load into Interface)</button>
+      <button id="p4b" class="alt">Solve Q5 Variant (Remove line 1-3)</button>
     </div>
-    <p class="note">Zbus for R–1 0.6, R–2 0.5, 2–3 0.5, 1–3 0.25 using types 1, 1, 2, 4; removing 1–3 is a type-4 link of −0.25.</p>
   </section>
 
-  <section class="card">
-    <h2>Question 6: Ybus inversion & 3φ fault at bus 4</h2>
-    <div class="row">
-      <button id="p5">Solve Question 6 (Fault at bus 4)</button>
+  <section class="card border-t-4 border-t-slate-700">
+    <h2>Question 6: Y-bus Inversion & 3Φ Fault at bus 4</h2>
+    <p class="q mb-5">4-bus network utilizing generator branches (T + G = j0.15) at buses 1 and 2. Verifies branch current distribution formulas.</p>
+    <div class="flex gap-4">
+      <button id="p5">Solve Q6 (Load into Interface)</button>
     </div>
-    <p class="note">4-bus network with generator branches (T + G = j0.15) at buses 1 and 2.</p>
   </section>
 
 </div>
 </main>
 
 <script>
-/* ===== complex helpers: [re, im] ===== */
-const $=id=>document.getElementById(id);
-const C={add:(a,b)=>[a[0]+b[0],a[1]+b[1]],sub:(a,b)=>[a[0]-b[0],a[1]-b[1]],
- mul:(a,b)=>[a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]],
- div:(a,b)=>{const d=b[0]*b[0]+b[1]*b[1];if(d<1e-18)throw new Error("Division by zero (singular case).");return[(a[0]*b[0]+a[1]*b[1])/d,(a[1]*b[0]-a[0]*b[1])/d]},
- neg:a=>[-a[0],-a[1]],k:(s,a)=>[s*a[0],s*a[1]],abs:a=>Math.hypot(a[0],a[1]),
- ang:a=>Math.atan2(a[1],a[0])*180/Math.PI,par:(a,b)=>C.div(C.mul(a,b),C.add(a,b))};
-const J=x=>[0,x],Rl=x=>[x,0],Pl=(m,d)=>[m*Math.cos(d*Math.PI/180),m*Math.sin(d*Math.PI/180)];
-const AL=Pl(1,120),AL2=Pl(1,240),S3=Math.sqrt(3);
-const sum=(...a)=>a.reduce(C.add,[0,0]);
-const dec=()=>Math.max(0,Math.min(8,parseInt($("dec").value)||0));
-function fr(c){const d=dec(),z=x=>Math.abs(x)<5*Math.pow(10,-d-1)?0:x;const r=z(c[0]),i=z(c[1]);return r.toFixed(d)+(i<0?" - j":" + j")+Math.abs(i).toFixed(d)}
-function fp(c){const d=dec(),m=C.abs(c);return m.toFixed(d)+" ∠ "+(m<1e-9?0:C.ang(c)).toFixed(Math.max(1,d-2))+"°"}
-function parseC(str){
-  let s=String(str).replace(/\s+/g,"").replace(/°/g,"");
-  if(s==="")throw new Error("Empty value.");
-  const pm=s.match(/^([^∠<]+)[∠<](.+)$/);
-  if(pm){const m=parseFloat(pm[1]),d=parseFloat(pm[2]);if(isNaN(m)||isNaN(d))throw new Error('Cannot read "'+str+'".');return Pl(m,d)}
-  s=s.replace(/[iI]/g,"j").toLowerCase();
-  const t=s.match(/[+-]?(?:j?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?j?|j)/g);
-  if(!t||t.join("")!==s)throw new Error('Cannot read "'+str+'" as a complex number.');
-  let re=0,im=0;
-  for(const x of t){const sg=x[0]==="-"?-1:1,b=x.replace(/^[+-]/,""),n=b.replace("j",""),v=n===""?1:parseFloat(n);if(b.includes("j"))im+=sg*v;else re+=sg*v}
-  return[re,im];
-}
-const gv=id=>{const v=parseFloat($(id).value);if(isNaN(v))throw new Error("Invalid number in field "+id+".");return v};
-function mk(id,f){$(id).innerHTML=f.map(([k,l,v])=>'<div><label for="'+k+'">'+l+'</label><input id="'+k+'" value="'+v+'"></div>').join("")}
-/* result table: rows = [label, complex|string, scale?, unit?] ; {h:"title"} = heading */
-function T(rows){
-  let h='<table class="res"><tr><th>Quantity</th><th>Rectangular</th><th>Polar</th><th>Actual</th></tr>';
-  for(const r of rows){
-    if(r.h){h+='<tr class="h"><td colspan="4">'+r.h+'</td></tr>';continue}
-    if(typeof r[1]==="string"){h+='<tr><td>'+r[0]+'</td><td colspan="3">'+r[1]+'</td></tr>';continue}
-    const a=r[2]!==undefined?(C.abs(r[1])*r[2]).toFixed(Math.max(2,dec()-1))+" "+(r[3]||""):"";
-    h+='<tr><td>'+r[0]+'</td><td>'+fr(r[1])+'</td><td>'+fp(r[1])+'</td><td>'+a+'</td></tr>';
-  }
-  return h+'</table>';
-}
-function matT(M,id){
-  $(id).innerHTML=M.length?'<tr><th></th>'+M.map((_,i)=>"<th>Bus "+(i+1)+"</th>").join("")+"</tr>"+M.map((r,i)=>"<tr><th>Bus "+(i+1)+"</th>"+r.map(c=>'<td class="v">'+($("fmt").value==="polar"?fp(c):fr(c))+"</td>").join("")+"</tr>").join(""):"<tr><td>The matrix is empty. Add a Type 1 branch to create bus 1.</td></tr>";
-}
-const toSeq=v=>[C.k(1/3,sum(v[0],v[1],v[2])),C.k(1/3,sum(v[0],C.mul(AL,v[1]),C.mul(AL2,v[2]))),C.k(1/3,sum(v[0],C.mul(AL2,v[1]),C.mul(AL,v[2])))];
-const toAbc=s=>[sum(s[0],s[1],s[2]),sum(s[0],C.mul(AL2,s[1]),C.mul(AL,s[2])),sum(s[0],C.mul(AL,s[1]),C.mul(AL2,s[2]))];
-function guard(msgId,fn){$(msgId).textContent="";try{fn()}catch(e){$(msgId).textContent=e.message}}
+/* ===== UI Handling & Navigation ===== */
+const tabActive = "tab-btn whitespace-nowrap py-4 px-2 border-b-2 border-blue-600 font-medium text-sm text-blue-600 transition-colors";
+const tabInactive = "tab-btn whitespace-nowrap py-4 px-2 border-b-2 border-transparent font-medium text-sm text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors";
 
-/* ===== tabs ===== */
-document.querySelectorAll("button.tab").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("button.tab").forEach(x=>x.classList.toggle("on",x===b));
-  document.querySelectorAll(".tab-body").forEach(d=>d.style.display=d.id===b.dataset.t?"grid":"none");
+document.querySelectorAll("button.tab-btn").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll("button.tab-btn").forEach(x => {
+      x.className = x === b ? tabActive : tabInactive;
+    });
+    document.querySelectorAll(".tab-body").forEach(d => {
+      if(d.id === b.dataset.t) {
+        d.classList.remove("hidden");
+        d.classList.add("flex");
+      } else {
+        d.classList.add("hidden");
+        d.classList.remove("flex");
+      }
+    });
+  };
 });
-$("dec").onchange=()=>{render();};
+
+/* ===== complex helpers: [re, im] ===== */
+const $ = id => document.getElementById(id);
+const C = {
+ add: (a,b) => [a[0]+b[0], a[1]+b[1]], 
+ sub: (a,b) => [a[0]-b[0], a[1]-b[1]],
+ mul: (a,b) => [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]],
+ div: (a,b) => {
+   const d = b[0]*b[0] + b[1]*b[1];
+   if(d < 1e-18) throw new Error("Division by zero (singular case).");
+   return [(a[0]*b[0]+a[1]*b[1])/d, (a[1]*b[0]-a[0]*b[1])/d]
+ },
+ neg: a => [-a[0], -a[1]], 
+ k: (s,a) => [s*a[0], s*a[1]], 
+ abs: a => Math.hypot(a[0], a[1]),
+ ang: a => Math.atan2(a[1], a[0])*180/Math.PI, 
+ par: (a,b) => C.div(C.mul(a,b), C.add(a,b))
+};
+const J = x => [0, x], Rl = x => [x, 0], Pl = (m,d) => [m*Math.cos(d*Math.PI/180), m*Math.sin(d*Math.PI/180)];
+const AL = Pl(1, 120), AL2 = Pl(1, 240), S3 = Math.sqrt(3);
+const sum = (...a) => a.reduce(C.add, [0,0]);
+const dec = () => Math.max(0, Math.min(8, parseInt($("dec").value) || 0));
+
+function fr(c) {
+  const d = dec(), z = x => Math.abs(x) < 5*Math.pow(10, -d-1) ? 0 : x;
+  const r = z(c[0]), i = z(c[1]);
+  return r.toFixed(d) + (i < 0 ? " - j" : " + j") + Math.abs(i).toFixed(d);
+}
+function fp(c) {
+  const d = dec(), m = C.abs(c);
+  return m.toFixed(d) + " ∠ " + (m < 1e-9 ? 0 : C.ang(c)).toFixed(Math.max(1, d-2)) + "°";
+}
+
+function parseC(str) {
+  let s = String(str).replace(/\s+/g,"").replace(/°/g,"");
+  if(s === "") throw new Error("Empty value.");
+  const pm = s.match(/^([^∠<]+)[∠<](.+)$/);
+  if(pm) {
+    const m = parseFloat(pm[1]), d = parseFloat(pm[2]);
+    if(isNaN(m) || isNaN(d)) throw new Error('Cannot read "'+str+'".');
+    return Pl(m, d);
+  }
+  s = s.replace(/[iI]/g,"j").toLowerCase();
+  const t = s.match(/[+-]?(?:j?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?j?|j)/g);
+  if(!t || t.join("") !== s) throw new Error('Cannot read "'+str+'" as a complex number.');
+  let re = 0, im = 0;
+  for(const x of t) {
+    const sg = x[0] === "-" ? -1 : 1, b = x.replace(/^[+-]/,""), n = b.replace("j",""), v = n === "" ? 1 : parseFloat(n);
+    if(b.includes("j")) im += sg*v; else re += sg*v;
+  }
+  return [re, im];
+}
+
+const gv = id => {
+  const v = parseFloat($(id).value);
+  if(isNaN(v)) throw new Error("Invalid number in field " + id + ".");
+  return v;
+};
+
+/* Form Builder Helper for Inputs injected dynamically */
+function mk(id, f) {
+  $(id).innerHTML = f.map(([k,l,v]) => '<div class="flex-auto min-w-[130px] max-w-[200px]"><label for="'+k+'">'+l+'</label><input id="'+k+'" value="'+v+'"></div>').join("");
+}
+
+/* Result table renderer */
+function T(rows) {
+  let h = '<div class="overflow-x-auto"><table class="res"><tr><th>Quantity</th><th>Rectangular</th><th>Polar</th><th>Actual</th></tr>';
+  for(const r of rows) {
+    if(r.h) { h += '<tr class="h"><td colspan="4">' + r.h + '</td></tr>'; continue; }
+    if(typeof r[1] === "string") { h += '<tr><td>' + r[0] + '</td><td colspan="3">' + r[1] + '</td></tr>'; continue; }
+    const a = r[2] !== undefined ? (C.abs(r[1])*r[2]).toFixed(Math.max(2, dec()-1)) + " " + (r[3]||"") : "";
+    h += '<tr><td>' + r[0] + '</td><td>' + fr(r[1]) + '</td><td>' + fp(r[1]) + '</td><td>' + a + '</td></tr>';
+  }
+  return h + '</table></div>';
+}
+
+function matT(M, id) {
+  $(id).innerHTML = M.length ? '<tr><th></th>' + M.map((_,i) => "<th>Bus " + (i+1) + "</th>").join("") + "</tr>" + M.map((r,i) => "<tr><th>Bus " + (i+1) + "</th>" + r.map(c => '<td class="v">' + ($("fmt").value === "polar" ? fp(c) : fr(c)) + "</td>").join("") + "</tr>").join("") : '<tr><td class="p-6 text-center text-slate-500 italic">The matrix is empty. Add a Type 1 branch to create bus 1.</td></tr>';
+}
+
+const toSeq = v => [C.k(1/3, sum(v[0], v[1], v[2])), C.k(1/3, sum(v[0], C.mul(AL, v[1]), C.mul(AL2, v[2]))), C.k(1/3, sum(v[0], C.mul(AL2, v[1]), C.mul(AL, v[2])))];
+const toAbc = s => [sum(s[0], s[1], s[2]), sum(s[0], C.mul(AL2, s[1]), C.mul(AL, s[2])), sum(s[0], C.mul(AL, s[1]), C.mul(AL2, s[2]))];
+function guard(msgId, fn) { $(msgId).textContent = ""; try { fn() } catch(e) { $(msgId).textContent = e.message; } }
 
 /* ===== TAB 1: Z-bus builder ===== */
-let Z=[],hist=[];
-function buildGrid(){
-  const n=Math.max(0,Math.min(30,parseInt($("n").value)||0));
-  let h="<tr><th></th>"+Array.from({length:n},(_,c)=>"<th>Bus "+(c+1)+"</th>").join("")+"</tr>";
-  for(let r=1;r<=n;r++){h+="<tr><th>Bus "+r+"</th>";for(let c=1;c<=n;c++)h+='<td><input data-r="'+(r-1)+'" data-c="'+(c-1)+'" aria-label="Z'+r+c+'" value="'+(r===c?"j0.1":"0")+'"></td>';h+="</tr>"}
-  $("inp").innerHTML=n?h:"";
-  $("m1").textContent=n?"":"Empty network selected. Click “Use entered matrix”, then add Type 1 branches from the reference.";
+let Z = [], hist = [];
+function buildGrid() {
+  const n = Math.max(0, Math.min(30, parseInt($("n").value) || 0));
+  let h = "<tr><th></th>" + Array.from({length:n}, (_,c) => "<th>Bus " + (c+1) + "</th>").join("") + "</tr>";
+  for(let r=1; r<=n; r++){
+    h += "<tr><th>Bus " + r + "</th>";
+    for(let c=1; c<=n; c++){
+      h += '<td><input data-r="' + (r-1) + '" data-c="' + (c-1) + '" aria-label="Z' + r + c + '" value="' + (r===c ? "j0.1" : "0") + '"></td>';
+    }
+    h += "</tr>";
+  }
+  $("inp").innerHTML = n ? h : "";
+  $("m1").textContent = n ? "" : "Empty network selected. Click “Use Entered Matrix”, then add Type 1 branches from the reference.";
 }
-function loadMatrix(){guard("m1",()=>{
-  const n=Math.max(0,parseInt($("n").value)||0),M=Array.from({length:n},()=>Array(n).fill(null));
-  $("inp").querySelectorAll("input").forEach(e=>{M[+e.dataset.r][+e.dataset.c]=parseC(e.value)});
-  Z=M;hist=[];$("m2").textContent="";$("p").value=n+1;logR();render();
-})}
-function mirror(){const els=[...$("inp").querySelectorAll("input")];els.forEach(e=>{const r=+e.dataset.r,c=+e.dataset.c;if(r>c)e.value=els.find(x=>+x.dataset.r===c&&+x.dataset.c===r).value})}
-const col=(M,k)=>M.map(r=>r[k-1]);
-const aug=(M,c,z)=>{const A=M.map((r,i)=>[...r,c[i]]);A.push([...c,z]);return A};
-function kron(A){const n=A.length-1,pv=A[n][n];return A.slice(0,n).map((r,i)=>r.slice(0,n).map((x,j)=>C.sub(x,C.div(C.mul(A[i][n],A[n][j]),pv))))}
-const T3=(M,k,Zb)=>kron(aug(M,col(M,k),C.add(M[k-1][k-1],Zb)));
-function T4(M,j,k,Zb){const cj=col(M,j),ck=col(M,k),c=cj.map((v,i)=>C.sub(v,ck[i]));
-  return kron(aug(M,c,C.add(Zb,C.sub(C.add(M[j-1][j-1],M[k-1][k-1]),C.k(2,M[j-1][k-1])))))}
-function chk(b,n,nm,z0){if(!Number.isInteger(b)||b<(z0?0:1)||b>n)throw new Error(nm+" must be "+(z0?"0 (reference) or ":"")+"an existing bus between 1 and "+n+".")}
-function applyOp(o){
-  const n=Z.length;let R,tx;
-  if(o.t===1){const Zb=parseC(o.z);if(o.p!==n+1)throw new Error("New bus number must be "+(n+1)+".");R=aug(Z,Array(n).fill([0,0]),Zb);tx="Type 1: bus "+o.p+" to reference, Zb = "+fr(Zb)}
-  else if(o.t===2){const Zb=parseC(o.z);if(o.p!==n+1)throw new Error("New bus number must be "+(n+1)+".");chk(o.k,n,"Bus k",false);R=aug(Z,col(Z,o.k),C.add(Z[o.k-1][o.k-1],Zb));tx="Type 2: bus "+o.p+" to bus "+o.k+", Zb = "+fr(Zb)}
-  else if(o.t===3){const Zb=parseC(o.z);chk(o.k,n,"Bus k",false);R=T3(Z,o.k,Zb);tx="Type 3: bus "+o.k+" to reference, Zb = "+fr(Zb)}
-  else if(o.t===4){const Zb=parseC(o.z);chk(o.j,n,"Bus j",false);chk(o.k,n,"Bus k",false);if(o.j===o.k)throw new Error("Buses j and k must differ.");R=T4(Z,o.j,o.k,Zb);tx="Type 4: bus "+o.j+" to bus "+o.k+", Zb = "+fr(Zb)}
-  else{chk(o.j,n,"Bus j",true);chk(o.k,n,"Bus k",true);if(o.j===o.k)throw new Error("Buses j and k must differ.");
-    const zo=parseC(o.zo);let zl;
-    if(String(o.zn).trim()===""){zl=C.neg(zo);tx="Type 5: removed branch "+o.j+"–"+o.k}
-    else{const zn=parseC(o.zn);zl=C.div(C.mul(zo,zn),C.sub(zo,zn));tx="Type 5: branch "+o.j+"–"+o.k+" changed from "+fr(zo)+" to "+fr(zn)}
-    R=o.k===0?T3(Z,o.j,zl):o.j===0?T3(Z,o.k,zl):T4(Z,o.j,o.k,zl);tx+=" (equivalent link Zl = "+fr(zl)+")"}
-  return{R,tx};
+
+function loadMatrix() {
+  guard("m1", () => {
+    const n = Math.max(0, parseInt($("n").value) || 0), M = Array.from({length:n}, () => Array(n).fill(null));
+    $("inp").querySelectorAll("input").forEach(e => { M[+e.dataset.r][+e.dataset.c] = parseC(e.value) });
+    Z = M; hist = []; $("m2").textContent = ""; $("p").value = n + 1; logR(); render();
+  });
 }
-function runOp(o){const r=applyOp(o);hist.push({Z,tx:r.tx});Z=r.R}
-function readOp(){return{t:+$("type").value,p:+$("p").value,j:+$("j").value,k:+$("k").value,z:$("z").value,zo:$("zo").value,zn:$("zn").value}}
-function logR(){$("log").innerHTML=hist.length?hist.map(h=>"<li>"+h.tx+"</li>").join(""):"<li>No changes yet.</li>";$("p").value=Z.length+1}
-function render(){$("dim").textContent="("+Z.length+" × "+Z.length+")";matT(Z,"out")}
-$("apply").onclick=()=>guard("m2",()=>{runOp(readOp());logR();render()});
-$("undo").onclick=()=>guard("m2",()=>{if(!hist.length)throw new Error("Nothing to undo.");Z=hist.pop().Z;logR();render()});
-function syncForm(){const t=+$("type").value,sh=(i,v)=>$(i).classList.toggle("hidden",!v);
-  sh("fP",t<3);sh("fJ",t>3);sh("fK",t!==1);sh("fZ",t!==5);sh("fZo",t===5);sh("fZn",t===5);
-  $("hint").textContent={1:"New bus p to reference: Z(p,p) = Zb, other new entries 0.",2:"New bus p to existing bus k: new row/column = column k of Zbus, Z(p,p) = Z(k,k) + Zb.",3:"Link bus k to reference: augment with Z(k,k)+Zb, then Kron-eliminate the extra row/column.",4:"Link between j and k: new row = Z(i,j) − Z(i,k); Z(l,l) = Zb + Z(j,j) + Z(k,k) − 2Z(j,k); then Kron reduction.",5:"Enter old and new branch impedance. Applied as a parallel link Zl = Zold·Znew/(Zold − Znew); blank new value removes the branch (Zl = −Zold). Use bus 0 for a branch to reference."}[t]}
-$("type").onchange=syncForm;$("fmt").onchange=render;$("mk").onclick=buildGrid;$("load").onclick=loadMatrix;$("sym").onclick=mirror;
+
+function mirror() {
+  const els = [...$("inp").querySelectorAll("input")];
+  els.forEach(e => {
+    const r = +e.dataset.r, c = +e.dataset.c;
+    if(r > c) e.value = els.find(x => +x.dataset.r === c && +x.dataset.c === r).value;
+  });
+}
+
+const col = (M, k) => M.map(r => r[k-1]);
+const aug = (M, c, z) => { const A = M.map((r,i) => [...r, c[i]]); A.push([...c, z]); return A };
+function kron(A) {
+  const n = A.length - 1, pv = A[n][n];
+  return A.slice(0, n).map((r,i) => r.slice(0, n).map((x,j) => C.sub(x, C.div(C.mul(A[i][n], A[n][j]), pv))));
+}
+const T3 = (M, k, Zb) => kron(aug(M, col(M, k), C.add(M[k-1][k-1], Zb)));
+function T4(M, j, k, Zb) {
+  const cj = col(M, j), ck = col(M, k), c = cj.map((v,i) => C.sub(v, ck[i]));
+  return kron(aug(M, c, C.add(Zb, C.sub(C.add(M[j-1][j-1], M[k-1][k-1]), C.k(2, M[j-1][k-1])))));
+}
+
+function chk(b, n, nm, z0) {
+  if(!Number.isInteger(b) || b < (z0 ? 0 : 1) || b > n) throw new Error(nm + " must be " + (z0 ? "0 (reference) or " : "") + "an existing bus between 1 and " + n + ".");
+}
+
+function applyOp(o) {
+  const n = Z.length; let R, tx;
+  if(o.t === 1) {
+    const Zb = parseC(o.z);
+    if(o.p !== n+1) throw new Error("New bus number must be " + (n+1) + ".");
+    R = aug(Z, Array(n).fill([0,0]), Zb);
+    tx = "Type 1: bus " + o.p + " to reference, Zb = " + fr(Zb);
+  } else if(o.t === 2) {
+    const Zb = parseC(o.z);
+    if(o.p !== n+1) throw new Error("New bus number must be " + (n+1) + ".");
+    chk(o.k, n, "Bus k", false);
+    R = aug(Z, col(Z, o.k), C.add(Z[o.k-1][o.k-1], Zb));
+    tx = "Type 2: bus " + o.p + " to bus " + o.k + ", Zb = " + fr(Zb);
+  } else if(o.t === 3) {
+    const Zb = parseC(o.z);
+    chk(o.k, n, "Bus k", false);
+    R = T3(Z, o.k, Zb);
+    tx = "Type 3: bus " + o.k + " to reference, Zb = " + fr(Zb);
+  } else if(o.t === 4) {
+    const Zb = parseC(o.z);
+    chk(o.j, n, "Bus j", false); chk(o.k, n, "Bus k", false);
+    if(o.j === o.k) throw new Error("Buses j and k must differ.");
+    R = T4(Z, o.j, o.k, Zb);
+    tx = "Type 4: bus " + o.j + " to bus " + o.k + ", Zb = " + fr(Zb);
+  } else {
+    chk(o.j, n, "Bus j", true); chk(o.k, n, "Bus k", true);
+    if(o.j === o.k) throw new Error("Buses j and k must differ.");
+    const zo = parseC(o.zo); let zl;
+    if(String(o.zn).trim() === "") {
+      zl = C.neg(zo); tx = "Type 5: removed branch " + o.j + "–" + o.k;
+    } else {
+      const zn = parseC(o.zn);
+      zl = C.div(C.mul(zo, zn), C.sub(zo, zn));
+      tx = "Type 5: branch " + o.j + "–" + o.k + " changed from " + fr(zo) + " to " + fr(zn);
+    }
+    R = o.k === 0 ? T3(Z, o.j, zl) : o.j === 0 ? T3(Z, o.k, zl) : T4(Z, o.j, o.k, zl);
+    tx += " (equivalent link Zl = " + fr(zl) + ")";
+  }
+  return { R, tx };
+}
+
+function runOp(o) { const r = applyOp(o); hist.push({ Z, tx: r.tx }); Z = r.R; }
+function readOp() { return { t: +$("type").value, p: +$("p").value, j: +$("j").value, k: +$("k").value, z: $("z").value, zo: $("zo").value, zn: $("zn").value }; }
+function logR() {
+  $("log").innerHTML = hist.length ? hist.map((h, i) => "<li>" + h.tx + "</li>").join("") : "<li>No changes yet.</li>";
+  $("p").value = Z.length + 1;
+}
+function render() { $("dim").textContent = "(" + Z.length + " × " + Z.length + ")"; matT(Z, "out"); }
+
+$("apply").onclick = () => guard("m2", () => { runOp(readOp()); logR(); render(); });
+$("undo").onclick = () => guard("m2", () => { if(!hist.length) throw new Error("Nothing to undo."); Z = hist.pop().Z; logR(); render(); });
+
+function syncForm() {
+  const t = +$("type").value, sh = (i, v) => $(i).classList.toggle("hidden", !v);
+  sh("fP", t < 3); sh("fJ", t > 3); sh("fK", t !== 1); sh("fZ", t !== 5); sh("fZo", t === 5); sh("fZn", t === 5);
+  $("hint").innerHTML = {
+    1: "<strong>New bus p to reference:</strong> Z(p,p) = Zb, other new entries 0.",
+    2: "<strong>New bus p to existing bus k:</strong> New row/column = column k of Zbus, Z(p,p) = Z(k,k) + Zb.",
+    3: "<strong>Link bus k to reference:</strong> Augment with Z(k,k)+Zb, then Kron-eliminate the extra row/column.",
+    4: "<strong>Link between j and k:</strong> New row = Z(i,j) − Z(i,k); Z(l,l) = Zb + Z(j,j) + Z(k,k) − 2Z(j,k); then Kron reduction.",
+    5: "<strong>Branch Change:</strong> Enter old and new branch impedance. Applied as a parallel link Zl = Zold·Znew/(Zold − Znew); blank new value removes the branch (Zl = −Zold). Use bus 0 for a branch to reference."
+  }[t];
+}
+
+$("type").onchange = syncForm; $("fmt").onchange = render; $("mk").onclick = buildGrid; $("load").onclick = loadMatrix; $("sym").onclick = mirror;
+
+/* Switch tab programmatically */
+function jumpToTab1() {
+  document.querySelectorAll("button.tab-btn").forEach(b => {
+    b.className = b.dataset.t === "t1" ? tabActive : tabInactive;
+  });
+  $("t1").classList.remove("hidden");
+  $("t1").classList.add("flex");
+  $("t2").classList.add("hidden");
+  $("t2").classList.remove("flex");
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
 
 /* Question 5 presets */
-function ex4(rem){guard("m2",()=>{
-  $("t1").style.display="grid"; $("t2").style.display="none";
-  document.querySelectorAll("button.tab").forEach(b=>b.classList.toggle("on",b.dataset.t==="t1"));
-  Z=[];hist=[];
-  [{t:1,p:1,z:"0.6"},{t:1,p:2,z:"0.5"},{t:2,p:3,k:2,z:"0.5"},{t:4,j:1,k:3,z:"0.25"}].forEach(runOp);
-  $("br").value="1 0 0.6\n2 0 0.5\n2 3 0.5\n1 3 0.25";
-  if(rem){runOp({t:5,j:1,k:3,zo:"0.25",zn:""});$("br").value="1 0 0.6\n2 0 0.5\n2 3 0.5"}
-  logR();render();$("fb").value=1;
-})}
-$("p4").onclick=()=>ex4(false);$("p4b").onclick=()=>ex4(true);
+function ex4(rem) {
+  guard("m2", () => {
+    jumpToTab1();
+    Z = []; hist = [];
+    [{t:1, p:1, z:"0.6"}, {t:1, p:2, z:"0.5"}, {t:2, p:3, k:2, z:"0.5"}, {t:4, j:1, k:3, z:"0.25"}].forEach(runOp);
+    $("br").value = "1 0 0.6\n2 0 0.5\n2 3 0.5\n1 3 0.25";
+    if(rem) { runOp({t:5, j:1, k:3, zo:"0.25", zn:""}); $("br").value = "1 0 0.6\n2 0 0.5\n2 3 0.5"; }
+    logR(); render(); $("fb").value = 1;
+  });
+}
+$("p4").onclick = () => ex4(false); $("p4b").onclick = () => ex4(true);
 
 /* branch list, Ybus, inverse */
-function branches(){
-  const L=$("br").value.split("\n").map(s=>s.trim()).filter(Boolean);
-  if(!L.length)throw new Error("Branch list is empty.");
-  return L.map((s,i)=>{const t=s.split(/\s+/);if(t.length<3)throw new Error("Line "+(i+1)+': use "from to Z [E]".');
-    const a=parseInt(t[0]),b=parseInt(t[1]);if(isNaN(a)||isNaN(b)||a<0||b<0||a===b)throw new Error("Line "+(i+1)+": invalid bus numbers.");
-    return{a,b,z:parseC(t[2]),E:t[3]!==undefined?parseC(t[3]):null}});
+function branches() {
+  const L = $("br").value.split("\n").map(s => s.trim()).filter(Boolean);
+  if(!L.length) throw new Error("Branch list is empty.");
+  return L.map((s, i) => {
+    const t = s.split(/\s+/);
+    if(t.length < 3) throw new Error("Line " + (i+1) + ': use "from to Z [E]".');
+    const a = parseInt(t[0]), b = parseInt(t[1]);
+    if(isNaN(a) || isNaN(b) || a < 0 || b < 0 || a === b) throw new Error("Line " + (i+1) + ": invalid bus numbers.");
+    return { a, b, z: parseC(t[2]), E: t[3] !== undefined ? parseC(t[3]) : null };
+  });
 }
-function inv(M){const n=M.length;
-  const A=M.map((r,i)=>[...r,...Array.from({length:n},(_,j)=>i===j?[1,0]:[0,0])]);
-  for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(C.abs(A[r][c])>C.abs(A[p][c]))p=r;
-    if(C.abs(A[p][c])<1e-12)throw new Error("Ybus is singular: every bus needs a path to the reference.");
-    [A[c],A[p]]=[A[p],A[c]];const d=A[c][c];A[c]=A[c].map(x=>C.div(x,d));
-    for(let r=0;r<n;r++)if(r!==c){const f=A[r][c];A[r]=A[r].map((x,k)=>C.sub(x,C.mul(f,A[c][k])))}}
-  return A.map(r=>r.slice(n));}
-function buildZfromBranches(){
-  const B=branches(),n=Math.max(...B.map(x=>Math.max(x.a,x.b)));
-  const Y=Array.from({length:n},()=>Array.from({length:n},()=>[0,0]));
-  for(const x of B){const y=C.div([1,0],x.z);
-    if(x.a)Y[x.a-1][x.a-1]=C.add(Y[x.a-1][x.a-1],y);
-    if(x.b)Y[x.b-1][x.b-1]=C.add(Y[x.b-1][x.b-1],y);
-    if(x.a&&x.b){Y[x.a-1][x.b-1]=C.sub(Y[x.a-1][x.b-1],y);Y[x.b-1][x.a-1]=C.sub(Y[x.b-1][x.a-1],y)}}
-  matT(Y,"yb");
-  Z=inv(Y);hist=[{Z:[],tx:"Zbus obtained by inverting Ybus of the branch list"}];logR();render();
+
+function inv(M) {
+  const n = M.length;
+  const A = M.map((r, i) => [...r, ...Array.from({length:n}, (_,j) => i === j ? [1,0] : [0,0])]);
+  for(let c=0; c<n; c++) {
+    let p = c;
+    for(let r=c+1; r<n; r++) if(C.abs(A[r][c]) > C.abs(A[p][c])) p = r;
+    if(C.abs(A[p][c]) < 1e-12) throw new Error("Ybus is singular: every bus needs a path to the reference.");
+    [A[c], A[p]] = [A[p], A[c]];
+    const d = A[c][c];
+    A[c] = A[c].map(x => C.div(x, d));
+    for(let r=0; r<n; r++) if(r !== c) {
+      const f = A[r][c];
+      A[r] = A[r].map((x, k) => C.sub(x, C.mul(f, A[c][k])));
+    }
+  }
+  return A.map(r => r.slice(n));
 }
-$("byb").onclick=()=>guard("m3",buildZfromBranches);
+
+function buildZfromBranches() {
+  const B = branches(), n = Math.max(...B.map(x => Math.max(x.a, x.b)));
+  const Y = Array.from({length:n}, () => Array.from({length:n}, () => [0,0]));
+  for(const x of B) {
+    const y = C.div([1,0], x.z);
+    if(x.a) Y[x.a-1][x.a-1] = C.add(Y[x.a-1][x.a-1], y);
+    if(x.b) Y[x.b-1][x.b-1] = C.add(Y[x.b-1][x.b-1], y);
+    if(x.a && x.b) {
+      Y[x.a-1][x.b-1] = C.sub(Y[x.a-1][x.b-1], y);
+      Y[x.b-1][x.a-1] = C.sub(Y[x.b-1][x.a-1], y);
+    }
+  }
+  matT(Y, "yb");
+  Z = inv(Y); hist = [{ Z: [], tx: "Z-bus obtained by inverting Y-bus of the branch list" }]; logR(); render();
+}
+$("byb").onclick = () => guard("m3", buildZfromBranches);
 
 /* 3-phase fault from Zbus */
-function zFault(){
-  const n=Z.length,r=parseInt($("fb").value);if(!n)throw new Error("Build a Z-bus first.");chk(r,n,"Fault bus",false);
-  const zf=parseC($("fz").value),v0=parseC($("fv").value),If=C.div(v0,C.add(Z[r-1][r-1],zf));
-  const V=Z.map((row,i)=>C.sub(v0,C.mul(row[r-1],If)));
-  const rows=[{h:"Fault at bus "+r+" (Zf = "+fr(zf)+")"},["Fault current If",If],{h:"Bus voltages during fault"}];
-  V.forEach((v,i)=>rows.push(["V"+(i+1),v]));
-  let bl=[];try{bl=branches()}catch(e){}
-  const vv=b=>b===0?[0,0]:V[b-1];
-  const ok=bl.filter(x=>x.a<=n&&x.b<=n);
-  if(ok.length){rows.push({h:"Branch currents (positive direction first bus → second bus; source branches reference → bus)"});
-    ok.forEach(x=>{if(x.E){rows.push(["Source "+x.b+"→"+x.a+" (E = "+fr(x.E)+")",C.div(C.sub(C.mul(x.E,v0),vv(x.a||x.b)),x.z)])}
-      else rows.push(["I"+x.a+"–"+x.b,C.div(C.sub(vv(x.a),vv(x.b)),x.z)])})}
-  $("fout").innerHTML=T(rows);
+function zFault() {
+  const n = Z.length, r = parseInt($("fb").value);
+  if(!n) throw new Error("Build a Z-bus first.");
+  chk(r, n, "Fault bus", false);
+  const zf = parseC($("fz").value), v0 = parseC($("fv").value), If = C.div(v0, C.add(Z[r-1][r-1], zf));
+  const V = Z.map((row, i) => C.sub(v0, C.mul(row[r-1], If)));
+  const rows = [
+    {h: "Fault at bus " + r + " (Zf = " + fr(zf) + ")"}, 
+    ["Fault current If", If], 
+    {h: "Bus voltages during fault"}
+  ];
+  V.forEach((v, i) => rows.push(["V" + (i+1), v]));
+  
+  let bl = []; try { bl = branches() } catch(e) {}
+  const vv = b => b === 0 ? [0,0] : V[b-1];
+  const ok = bl.filter(x => x.a <= n && x.b <= n);
+  if(ok.length) {
+    rows.push({h: "Branch currents (positive direction: first bus → second bus; source branches: reference → bus)"});
+    ok.forEach(x => {
+      if(x.E) {
+        rows.push(["Source " + x.b + "→" + x.a + " (E = " + fr(x.E) + ")", C.div(C.sub(C.mul(x.E, v0), vv(x.a||x.b)), x.z)]);
+      } else {
+        rows.push(["I" + x.a + "–" + x.b, C.div(C.sub(vv(x.a), vv(x.b)), x.z)]);
+      }
+    });
+  }
+  $("fout").innerHTML = T(rows);
 }
-$("fgo").onclick=()=>guard("m4",zFault);
-$("p5").onclick=()=>{
-  $("t1").style.display="grid"; $("t2").style.display="none";
-  document.querySelectorAll("button.tab").forEach(b=>b.classList.toggle("on",b.dataset.t==="t1"));
-  $("br").value="1 0 j0.15 1\n2 0 j0.15 1\n1 3 j0.15\n1 4 j0.1\n1 2 j0.2\n2 3 j0.1\n2 4 j0.15";
-  guard("m3",()=>{buildZfromBranches();$("fb").value=4;$("fz").value="0";zFault()});
+$("fgo").onclick = () => guard("m4", zFault);
+
+$("p5").onclick = () => {
+  jumpToTab1();
+  $("br").value = "1 0 j0.15 1\n2 0 j0.15 1\n1 3 j0.15\n1 4 j0.1\n1 2 j0.2\n2 3 j0.1\n2 4 j0.15";
+  guard("m3", () => { buildZfromBranches(); $("fb").value = 4; $("fz").value = "0"; zFault(); });
 };
 
 /* ===== Sequence components ===== */
-function seqGo(){guard("m5",()=>{
-  const v=[parseC($("sx").value),parseC($("sy").value),parseC($("sz").value)];
-  if($("sm").value==="abc"){const s=toSeq(v);$("sout").innerHTML=T([["Zero sequence a0",s[0]],["Positive sequence a1",s[1]],["Negative sequence a2",s[2]]])}
-  else{const p=toAbc(v);$("sout").innerHTML=T([["Phase a",p[0]],["Phase b",p[1]],["Phase c",p[2]]])}
-})}
-function seqLab(){const a=$("sm").value==="abc";[["lx",a?"Va":"Ia0/Va0"],["ly",a?"Vb":"Ia1/Va1"],["lz",a?"Vc":"Ia2/Va2"]].forEach(([i,t])=>$(i).textContent=t)}
-function setSeq(m,x,y,z){$("sm").value=m;$("sx").value=x;$("sy").value=y;$("sz").value=z;seqLab();seqGo()}
-$("sm").onchange=seqLab;$("sgo").onclick=seqGo;
-$("s1").onclick=()=>setSeq("abc","110∠0","88∠-100","80∠175");
-$("s2").onclick=()=>setSeq("abc","100∠0","100∠-120","100∠120");
-$("s3").onclick=()=>setSeq("seq","10∠30","10∠30","10∠30");
-$("zgo").onclick=()=>guard("m5",()=>{const s=parseC($("zs").value),m=parseC($("zm").value);
-  $("zout").innerHTML=T([["Z0 = Zs + 2Zm",C.add(s,C.k(2,m))],["Z1 = Zs − Zm",C.sub(s,m)],["Z2 = Zs − Zm",C.sub(s,m)]])});
+function seqGo() {
+  guard("m5", () => {
+    const v = [parseC($("sx").value), parseC($("sy").value), parseC($("sz").value)];
+    if($("sm").value === "abc") {
+      const s = toSeq(v);
+      $("sout").innerHTML = T([["Zero sequence a0", s[0]], ["Positive sequence a1", s[1]], ["Negative sequence a2", s[2]]]);
+    } else {
+      const p = toAbc(v);
+      $("sout").innerHTML = T([["Phase a", p[0]], ["Phase b", p[1]], ["Phase c", p[2]]]);
+    }
+  });
+}
+function seqLab() {
+  const a = $("sm").value === "abc";
+  [["lx", a ? "Va" : "Ia0/Va0"], ["ly", a ? "Vb" : "Ia1/Va1"], ["lz", a ? "Vc" : "Ia2/Va2"]].forEach(([i,t]) => $(i).textContent = t);
+}
+function setSeq(m, x, y, z) { $("sm").value = m; $("sx").value = x; $("sy").value = y; $("sz").value = z; seqLab(); seqGo(); }
+$("sm").onchange = seqLab; $("sgo").onclick = seqGo;
+$("s1").onclick = () => setSeq("abc", "110∠0", "88∠-100", "80∠175");
+$("s2").onclick = () => setSeq("abc", "100∠0", "100∠-120", "100∠120");
+$("s3").onclick = () => setSeq("seq", "10∠30", "10∠30", "10∠30");
+$("zgo").onclick = () => guard("m5", () => {
+  const s = parseC($("zs").value), m = parseC($("zm").value);
+  $("zout").innerHTML = T([["Z0 = Zs + 2Zm", C.add(s, C.k(2, m))], ["Z1 = Zs − Zm", C.sub(s, m)], ["Z2 = Zs − Zm", C.sub(s, m)]]);
+});
 
 /* ===== Fault formulas ===== */
-function faultCalc(type,V,Z1,Z2,Z0,Zf){
-  let I1,I2,I0;
-  if(type==="LG"){I1=C.div(V,sum(Z1,Z2,Z0,C.k(3,Zf)));I2=I1;I0=I1}
-  else if(type==="LL"){I1=C.div(V,sum(Z1,Z2,Zf));I2=C.neg(I1);I0=[0,0]}
-  else if(type==="LLG"){const Zg=C.add(Z0,C.k(3,Zf)),d=C.add(Z2,Zg);
-    I1=C.div(V,C.add(Z1,C.div(C.mul(Z2,Zg),d)));I2=C.neg(C.div(C.mul(I1,Zg),d));I0=C.neg(C.div(C.mul(I1,Z2),d))}
-  else{I1=C.div(V,C.add(Z1,Zf));I2=[0,0];I0=[0,0]}
-  return{I:[I0,I1,I2],V:[C.neg(C.mul(Z0,I0)),C.sub(V,C.mul(Z1,I1)),C.neg(C.mul(Z2,I2))]};
+function faultCalc(type, V, Z1, Z2, Z0, Zf) {
+  let I1, I2, I0;
+  if(type === "LG") {
+    I1 = C.div(V, sum(Z1, Z2, Z0, C.k(3, Zf))); I2 = I1; I0 = I1;
+  } else if(type === "LL") {
+    I1 = C.div(V, sum(Z1, Z2, Zf)); I2 = C.neg(I1); I0 = [0,0];
+  } else if(type === "LLG") {
+    const Zg = C.add(Z0, C.k(3, Zf)), d = C.add(Z2, Zg);
+    I1 = C.div(V, C.add(Z1, C.div(C.mul(Z2, Zg), d))); 
+    I2 = C.neg(C.div(C.mul(I1, Zg), d)); 
+    I0 = C.neg(C.div(C.mul(I1, Z2), d));
+  } else {
+    I1 = C.div(V, C.add(Z1, Zf)); I2 = [0,0]; I0 = [0,0];
+  }
+  return { I: [I0, I1, I2], V: [C.neg(C.mul(Z0, I0)), C.sub(V, C.mul(Z1, I1)), C.neg(C.mul(Z2, I2))] };
 }
-$("ggo").onclick=()=>guard("m6",()=>{
-  const r=faultCalc($("ft").value,parseC($("gV").value),parseC($("g1").value),parseC($("g2").value),parseC($("g0").value),parseC($("gf").value));
-  const Sb=gv("gS"),kv=gv("gk"),Ib=Sb/(S3*kv)*1000,ph=toAbc(r.I),vp=toAbc(r.V);
-  $("gout").innerHTML=T([{h:"Sequence quantities"},["Ia0",r.I[0]],["Ia1",r.I[1]],["Ia2",r.I[2]],["Va0",r.V[0]],["Va1",r.V[1]],["Va2",r.V[2]],
-    {h:"Phase currents (base current "+Ib.toFixed(2)+" A)"},["Ia",ph[0],Ib,"A"],["Ib",ph[1],Ib,"A"],["Ic",ph[2],Ib,"A"],
-    {h:"Phase voltages at fault (line-to-neutral)"},["Va",vp[0],kv/S3,"kV"],["Vb",vp[1],kv/S3,"kV"],["Vc",vp[2],kv/S3,"kV"]]);
+
+$("ggo").onclick = () => guard("m6", () => {
+  const r = faultCalc($("ft").value, parseC($("gV").value), parseC($("g1").value), parseC($("g2").value), parseC($("g0").value), parseC($("gf").value));
+  const Sb = gv("gS"), kv = gv("gk"), Ib = Sb/(S3*kv)*1000, ph = toAbc(r.I), vp = toAbc(r.V);
+  $("gout").innerHTML = T([
+    {h: "Sequence quantities"}, ["Ia0", r.I[0]], ["Ia1", r.I[1]], ["Ia2", r.I[2]], ["Va0", r.V[0]], ["Va1", r.V[1]], ["Va2", r.V[2]],
+    {h: "Phase currents (base current " + Ib.toFixed(2) + " A)"}, ["Ia", ph[0], Ib, "A"], ["Ib", ph[1], Ib, "A"], ["Ic", ph[2], Ib, "A"],
+    {h: "Phase voltages at fault (line-to-neutral)"}, ["Va", vp[0], kv/S3, "kV"], ["Vb", vp[1], kv/S3, "kV"], ["Vc", vp[2], kv/S3, "kV"]
+  ]);
 });
 
-/* ---- 23-Oct problem ---- */
-(function(){
-  const D={G1:[.25,.25,.05],G2:[.2,.2,.05],T1:[.06,.06,.06],T2:[.07,.07,.07],L1:[.1,.1,.3],L2:[.1,.1,.3]};
-  const N={G1:"G1",G2:"G2",T1:"T1",T2:"T2",L1:"Line 1",L2:"Line 2"};
-  $("eq").innerHTML="<tr><th>Equipment</th><th>X1 (pu)</th><th>X2 (pu)</th><th>X0 (pu)</th></tr>"+Object.keys(D).map(k=>"<tr><th>"+N[k]+"</th>"+[1,2,0].map((s,i)=>'<td><input id="'+k+"_"+s+'" value="'+D[k][i]+'" style="width:80px"></td>').join("")+"</tr>").join("");
+/* ---- Question Solvers ---- */
+(function() {
+  const D = { G1: [.25, .25, .05], G2: [.2, .2, .05], T1: [.06, .06, .06], T2: [.07, .07, .07], L1: [.1, .1, .3], L2: [.1, .1, .3] };
+  const N = { G1: "G1", G2: "G2", T1: "T1", T2: "T2", L1: "Line 1", L2: "Line 2" };
+  $("eq").innerHTML = '<tr><th class="!bg-slate-100 border-b border-slate-200">Equipment</th><th class="!bg-slate-100 border-b border-slate-200">X1 (pu)</th><th class="!bg-slate-100 border-b border-slate-200">X2 (pu)</th><th class="!bg-slate-100 border-b border-slate-200">X0 (pu)</th></tr>' + 
+  Object.keys(D).map(k => "<tr><td class='font-medium bg-slate-50 border-b border-slate-100'>" + N[k] + "</td>" + [1, 2, 0].map((s, i) => '<td class="border-b border-slate-100"><input class="!w-20 !py-1 !text-center mx-auto" id="' + k + '_' + s + '" value="' + D[k][i] + '"></td>').join("") + "</tr>").join("");
 })();
-$("go4").onclick=()=>guard("m7",()=>{
-  const x=(n,s)=>gv(n+"_"+s),xn=gv("xn"),Sb=gv("S4"),kg=gv("kg"),kh=gv("kh"),zf=parseC($("zf4").value);
-  const Zl=[],Zr=[],Zs=[];
-  [0,1,2].forEach(s=>{
-    Zl[s]=J(s===0?x("T1",0):x("G1",s)+x("T1",s));
-    Zr[s]=J(x("L1",s)*x("L2",s)/(x("L1",s)+x("L2",s))+x("T2",s)+x("G2",s)+(s===0?3*xn:0));
-    Zs[s]=C.par(Zl[s],Zr[s])});
-  const f=faultCalc($("f4").value,[1,0],Zs[1],Zs[2],Zs[0],zf);
-  const IbH=Sb/(S3*kh)*1000,IbG=Sb/(S3*kg)*1000,pH=toAbc(f.I),vH=toAbc(f.V);
-  // G2 branch: current share = Zl/(Zl+Zr); G1 branch: Zr/(Zl+Zr); zero-seq blocked by delta at G1
-  const sh2=s=>C.div(Zl[s],C.add(Zl[s],Zr[s])),sh1=s=>C.div(Zr[s],C.add(Zl[s],Zr[s]));
-  const I2g=[0,1,2].map(s=>C.mul(f.I[s],sh2(s)));
-  const V2g=[C.neg(C.mul(I2g[0],J(x("G2",0)+3*xn))),C.sub([1,0],C.mul(I2g[1],J(x("G2",1)))),C.neg(C.mul(I2g[2],J(x("G2",2))))];
-  const I1g=[[0,0],C.mul(f.I[1],sh1(1)),C.mul(f.I[2],sh1(2))];
-  const V1g=[[0,0],C.sub([1,0],C.mul(I1g[1],J(x("G1",1)))),C.neg(C.mul(I1g[2],J(x("G1",2))))];
-  const rot=a=>[a[0],C.mul(a[1],Pl(1,-30)),C.mul(a[2],Pl(1,30))];   // Δ–Y shift: +seq −30°, −seq +30°
-  const I1s=rot(I1g),V1s=rot(V1g),pI2=toAbc(I2g),pV2=toAbc(V2g),pI1=toAbc(I1s),pV1=toAbc(V1s);
-  const ln=kg/S3,lh=kh/S3,nm=["a","b","c"],R=[];
-  R.push({h:"Equivalent sequence impedances at bus 2"},["Z1 (G1+T1) ∥ (Line1∥Line2 + T2 + G2)",Zs[1]],["Z2",Zs[2]],["Z0 = T1 ∥ (Line1∥Line2 + T2 + G2 + 3Xn)",Zs[0]]);
-  R.push({h:"(a) Fault current"},["Ia0",f.I[0]],["Ia1",f.I[1]],["Ia2",f.I[2]]);
-  nm.forEach((n,i)=>R.push(["I"+n+" (base "+IbH.toFixed(2)+" A)",pH[i],IbH,"A"]));
-  R.push({h:"(b) Line-to-neutral voltages at the fault point"});
-  nm.forEach((n,i)=>R.push(["V"+n,vH[i],lh,"kV"]));
-  R.push({h:"(c) Generator G2 terminals (no phase shift, T2 is Yg–Yg)"},["Sequence currents Ia0 / Ia1 / Ia2",fr(I2g[0])+"  |  "+fr(I2g[1])+"  |  "+fr(I2g[2])]);
-  nm.forEach((n,i)=>R.push(["I"+n+" (base "+IbG.toFixed(2)+" A)",pI2[i],IbG,"A"]));
-  nm.forEach((n,i)=>R.push(["V"+n,pV2[i],ln,"kV"]));
-  R.push({h:"(c) Generator G1 terminals (after Δ–Y shift: +seq −30°, −seq +30°, zero seq blocked)"});
-  nm.forEach((n,i)=>R.push(["I"+n,pI1[i],IbG,"A"]));
-  nm.forEach((n,i)=>R.push(["V"+n,pV1[i],ln,"kV"]));
-  $("o4").innerHTML=T(R)+'<p class="note">Slide comparison (LG, Zf = 0): the slide rounds Z1 = Z2 = j0.157, giving 2.74 pu; unrounded values give 2.73 pu, so small differences are expected. In the slide, Ib at G1 is printed as 2.40∠270°; the computed angle is 90° (Ia = 2.40∠270°, Ic = 0). The slide also writes 0.566 for the G1 Va and Vb magnitudes, while 0.556 pu is what its matrix result gives.</p>';
+
+$("go4").onclick = () => guard("m7", () => {
+  const x = (n, s) => gv(n + "_" + s), xn = gv("xn"), Sb = gv("S4"), kg = gv("kg"), kh = gv("kh"), zf = parseC($("zf4").value);
+  const Zl = [], Zr = [], Zs = [];
+  [0, 1, 2].forEach(s => {
+    Zl[s] = J(s === 0 ? x("T1", 0) : x("G1", s) + x("T1", s));
+    Zr[s] = J(x("L1", s)*x("L2", s)/(x("L1", s) + x("L2", s)) + x("T2", s) + x("G2", s) + (s === 0 ? 3*xn : 0));
+    Zs[s] = C.par(Zl[s], Zr[s]);
+  });
+  
+  const f = faultCalc($("f4").value, [1,0], Zs[1], Zs[2], Zs[0], zf);
+  const IbH = Sb/(S3*kh)*1000, IbG = Sb/(S3*kg)*1000, pH = toAbc(f.I), vH = toAbc(f.V);
+  
+  const sh2 = s => C.div(Zl[s], C.add(Zl[s], Zr[s])), sh1 = s => C.div(Zr[s], C.add(Zl[s], Zr[s]));
+  const I2g = [0, 1, 2].map(s => C.mul(f.I[s], sh2(s)));
+  const V2g = [C.neg(C.mul(I2g[0], J(x("G2", 0) + 3*xn))), C.sub([1,0], C.mul(I2g[1], J(x("G2", 1)))), C.neg(C.mul(I2g[2], J(x("G2", 2))))];
+  const I1g = [[0,0], C.mul(f.I[1], sh1(1)), C.mul(f.I[2], sh1(2))];
+  const V1g = [[0,0], C.sub([1,0], C.mul(I1g[1], J(x("G1", 1)))), C.neg(C.mul(I1g[2], J(x("G1", 2))))];
+  
+  const rot = a => [a[0], C.mul(a[1], Pl(1, -30)), C.mul(a[2], Pl(1, 30))];
+  const I1s = rot(I1g), V1s = rot(V1g), pI2 = toAbc(I2g), pV2 = toAbc(V2g), pI1 = toAbc(I1s), pV1 = toAbc(V1s);
+  const ln = kg/S3, lh = kh/S3, nm = ["a", "b", "c"], R = [];
+  
+  R.push({h: "Equivalent sequence impedances at bus 2"}, ["Z1 (G1+T1) ∥ (Line1∥Line2 + T2 + G2)", Zs[1]], ["Z2", Zs[2]], ["Z0 = T1 ∥ (Line1∥Line2 + T2 + G2 + 3Xn)", Zs[0]]);
+  R.push({h: "(a) Fault current"}, ["Ia0", f.I[0]], ["Ia1", f.I[1]], ["Ia2", f.I[2]]);
+  nm.forEach((n,i) => R.push(["I"+n+" (base "+IbH.toFixed(2)+" A)", pH[i], IbH, "A"]));
+  
+  R.push({h: "(b) Line-to-neutral voltages at the fault point"});
+  nm.forEach((n,i) => R.push(["V"+n, vH[i], lh, "kV"]));
+  
+  R.push({h: "(c) Generator G2 terminals (no phase shift, T2 is Yg–Yg)"}, ["Sequence currents Ia0 | Ia1 | Ia2", fr(I2g[0])+"  |  "+fr(I2g[1])+"  |  "+fr(I2g[2])]);
+  nm.forEach((n,i) => R.push(["I"+n+" (base "+IbG.toFixed(2)+" A)", pI2[i], IbG, "A"]));
+  nm.forEach((n,i) => R.push(["V"+n, pV2[i], ln, "kV"]));
+  
+  R.push({h: "(c) Generator G1 terminals (after Δ–Y shift: +seq −30°, −seq +30°, zero seq blocked)"});
+  nm.forEach((n,i) => R.push(["I"+n, pI1[i], IbG, "A"]));
+  nm.forEach((n,i) => R.push(["V"+n, pV1[i], ln, "kV"]));
+  
+  $("o4").innerHTML = T(R) + '<p class="note"><strong>Slide comparison (LG, Zf = 0):</strong> The slide rounds Z1 = Z2 = j0.157, giving 2.74 pu; unrounded values give 2.73 pu, so small differences are expected. In the slide, Ib at G1 is printed as 2.40∠270°; the computed angle is 90° (Ia = 2.40∠270°, Ic = 0). The slide also writes 0.566 for the G1 Va and Vb magnitudes, while 0.556 pu is what its matrix result gives.</p>';
 });
 
-/* ===== TAB 5: radial pu problems ===== */
-mk("f1",[["a_S","Base MVA",100],["a_kg","kV gen",11],["a_kl","kV line",33],["a_kc","kV cable",6.6],
- ["a_g1","G1 MVA",10],["a_g1x","G1 X %",15],["a_g2","G2 MVA",10],["a_g2x","G2 X %",12.5],
- ["a_t1","T1 MVA",10],["a_t1x","T1 X %",10],["a_t2","T2 MVA",5],["a_t2x","T2 X %",8],
- ["a_ll","Line km",30],["a_lr","r Ω/km",0.27],["a_lx","x Ω/km",0.36],["a_cl","Cable km",3],["a_cr","r Ω/km",0.135],["a_cx","x Ω/km",0.08]]);
-$("go1").onclick=()=>guard("m8",()=>{
-  const S=gv("a_S"),pu=(m,p)=>J(p/100*S/m);
-  const G1=pu(gv("a_g1"),gv("a_g1x")),G2=pu(gv("a_g2"),gv("a_g2x")),T1=pu(gv("a_t1"),gv("a_t1x")),T2=pu(gv("a_t2"),gv("a_t2x"));
-  const Zl=C.k(gv("a_ll")*S/Math.pow(gv("a_kl"),2),[gv("a_lr"),gv("a_lx")]);
-  const Zc=C.k(gv("a_cl")*S/Math.pow(gv("a_kc"),2),[gv("a_cr"),gv("a_cx")]);
-  const Zg=C.par(G1,G2), Ztot=sum(Zg,T1,Zl,T2,Zc);
-  const Isc=C.div([1,0],Ztot), Ib=S*1000/(S3*gv("a_kc"));
-  const Zbus11=sum(T1,Zl,T2,Zc), V11=C.mul(Isc,Zbus11);
-  $("o1").innerHTML=T([
-    {h:"Question 1 Results"},
+/* ===== radial pu problems ===== */
+mk("f1", [["a_S", "Base MVA", 100], ["a_kg", "kV gen", 11], ["a_kl", "kV line", 33], ["a_kc", "kV cable", 6.6],
+ ["a_g1", "G1 MVA", 10], ["a_g1x", "G1 X %", 15], ["a_g2", "G2 MVA", 10], ["a_g2x", "G2 X %", 12.5],
+ ["a_t1", "T1 MVA", 10], ["a_t1x", "T1 X %", 10], ["a_t2", "T2 MVA", 5], ["a_t2x", "T2 X %", 8],
+ ["a_ll", "Line km", 30], ["a_lr", "r Ω/km", 0.27], ["a_lx", "x Ω/km", 0.36], ["a_cl", "Cable km", 3], ["a_cr", "r Ω/km", 0.135], ["a_cx", "x Ω/km", 0.08]]);
+
+$("go1").onclick = () => guard("m8", () => {
+  const S = gv("a_S"), pu = (m,p) => J(p/100*S/m);
+  const G1 = pu(gv("a_g1"), gv("a_g1x")), G2 = pu(gv("a_g2"), gv("a_g2x")), T1 = pu(gv("a_t1"), gv("a_t1x")), T2 = pu(gv("a_t2"), gv("a_t2x"));
+  const Zl = C.k(gv("a_ll")*S/Math.pow(gv("a_kl"), 2), [gv("a_lr"), gv("a_lx")]);
+  const Zc = C.k(gv("a_cl")*S/Math.pow(gv("a_kc"), 2), [gv("a_cr"), gv("a_cx")]);
+  const Zg = C.par(G1, G2), Ztot = sum(Zg, T1, Zl, T2, Zc);
+  const Isc = C.div([1,0], Ztot), Ib = S*1000/(S3*gv("a_kc"));
+  const Zbus11 = sum(T1, Zl, T2, Zc), V11 = C.mul(Isc, Zbus11);
+  
+  $("o1").innerHTML = T([
+    {h: "Question 2 Results"},
     ["Z_total (pu)", Ztot],
     ["I_sc (pu)", Isc],
     ["I_sc (Actual)", Isc, Ib, "A"],
@@ -492,22 +800,25 @@ $("go1").onclick=()=>guard("m8",()=>{
   ]);
 });
 
-mk("f2",[["b_S","Base MVA",25],["b_G","Gen MVA",25],["b_Gx","Gen Xd'' %",20],
- ["b_t1","T1 MVA",25],["b_t1x","T1 X %",10],["b_t2","T2 MVA",25],["b_t2x","T2 X %",10],
- ["b_lx","Line X %",15],["b_m","Motor MVA",5],["b_mx2","Motor Xd'' %",25],["b_mx1","Motor Xd' %",30],
- ["b_kv","Motor kV",6.6]]);
-$("go2").onclick=()=>guard("m9",()=>{
-  const S=gv("b_S"), pu=(m,p)=>J(p/100*S/m);
-  const G=pu(gv("b_G"),gv("b_Gx")), T1=pu(gv("b_t1"),gv("b_t1x")), T2=pu(gv("b_t2"),gv("b_t2x")), L=J(gv("b_lx")/100);
-  const Zs=sum(G,T1,L,T2);
-  const M2=pu(gv("b_m"),gv("b_mx2")), M1=pu(gv("b_m"),gv("b_mx1"));
-  const Isc_pu=sum(C.div([1,0],Zs), C.k(3, C.div([1,0],M2)));
-  const IscB_pu=sum(C.div([1,0],Zs), C.k(2, C.div([1,0],M2)));
-  const IintB_pu=sum(C.div([1,0],Zs), C.k(2, C.div([1,0],M1)));
-  const Ib=S*1000/(S3*gv("b_kv"));
-  const bs=parseFloat($("bs").value);
-  $("o2").innerHTML=T([
-    {h:"Question 3 Results"},
+mk("f2", [["b_S", "Base MVA", 25], ["b_G", "Gen MVA", 25], ["b_Gx", "Gen Xd'' %", 20],
+ ["b_t1", "T1 MVA", 25], ["b_t1x", "T1 X %", 10], ["b_t2", "T2 MVA", 25], ["b_t2x", "T2 X %", 10],
+ ["b_lx", "Line X %", 15], ["b_m", "Motor MVA", 5], ["b_mx2", "Motor Xd'' %", 25], ["b_mx1", "Motor Xd' %", 30],
+ ["b_kv", "Motor kV", 6.6]]);
+
+$("go2").onclick = () => guard("m9", () => {
+  const S = gv("b_S"), pu = (m,p) => J(p/100*S/m);
+  const G = pu(gv("b_G"), gv("b_Gx")), T1 = pu(gv("b_t1"), gv("b_t1x")), T2 = pu(gv("b_t2"), gv("b_t2x")), L = J(gv("b_lx")/100);
+  const Zs = sum(G, T1, L, T2);
+  const M2 = pu(gv("b_m"), gv("b_mx2")), M1 = pu(gv("b_m"), gv("b_mx1"));
+  
+  const Isc_pu = sum(C.div([1,0], Zs), C.k(3, C.div([1,0], M2)));
+  const IscB_pu = sum(C.div([1,0], Zs), C.k(2, C.div([1,0], M2)));
+  const IintB_pu = sum(C.div([1,0], Zs), C.k(2, C.div([1,0], M1)));
+  const Ib = S*1000/(S3*gv("b_kv"));
+  const bs = parseFloat($("bs").value);
+  
+  $("o2").innerHTML = T([
+    {h: "Question 3 Results"},
     ["(a) Subtransient I_sc in fault (pu)", Isc_pu],
     ["(a) Actual I_sc", Isc_pu, Ib, "A"],
     ["(b) Subtransient I_sc in breaker B (pu)", IscB_pu],
@@ -518,25 +829,30 @@ $("go2").onclick=()=>guard("m9",()=>{
   ]);
 });
 
-mk("f3",[["c_S","Base MVA",25],["c_kv","Gen/Motor kV",11],
- ["c_g","Gen Xd'' %",15],["c_m","Motor Xd'' %",15],
- ["c_t1","T1 X %",10],["c_t2","T2 X %",10],["c_l","Line X %",10],
- ["c_mw","Load MW",15],["c_pf","Power Factor",0.8],["c_v","Prefault kV",10.6]]);
-$("go3").onclick=()=>guard("m10",()=>{
-  const S=gv("c_S"), kv=gv("c_kv"), V0=gv("c_v")/kv;
-  const Xg=J(gv("c_g")/100), Xm=J(gv("c_m")/100);
-  const Xnet=J((gv("c_t1")+gv("c_t2")+gv("c_l"))/100);
-  const ld_sgn=parseFloat($("ld").value), pf=gv("c_pf"), th=ld_sgn*Math.acos(pf);
-  const I0_mag=(gv("c_mw")/S)/(V0*pf);
-  const I0=[I0_mag*Math.cos(th), I0_mag*Math.sin(th)];
-  const Zg_net=sum(Xg,Xnet);
-  const Eg=C.add([V0,0], C.mul(I0, Zg_net));
-  const Em=C.sub([V0,0], C.mul(I0, Xm));
-  const Ig=C.div(Eg, Zg_net), Im=C.div(Em, Xm);
-  const If=sum(Ig, Im);
-  const Ib=S*1000/(S3*kv);
-  $("o3").innerHTML=T([
-    {h:"Question 4 Results"},
+mk("f3", [["c_S", "Base MVA", 25], ["c_kv", "Gen/Motor kV", 11],
+ ["c_g", "Gen Xd'' %", 15], ["c_m", "Motor Xd'' %", 15],
+ ["c_t1", "T1 X %", 10], ["c_t2", "T2 X %", 10], ["c_l", "Line X %", 10],
+ ["c_mw", "Load MW", 15], ["c_pf", "Power Factor", 0.8], ["c_v", "Prefault kV", 10.6]]);
+
+$("go3").onclick = () => guard("m10", () => {
+  const S = gv("c_S"), kv = gv("c_kv"), V0 = gv("c_v")/kv;
+  const Xg = J(gv("c_g")/100), Xm = J(gv("c_m")/100);
+  const Xnet = J((gv("c_t1")+gv("c_t2")+gv("c_l"))/100);
+  const ld_sgn = parseFloat($("ld").value), pf = gv("c_pf"), th = ld_sgn*Math.acos(pf);
+  
+  const I0_mag = (gv("c_mw")/S)/(V0*pf);
+  const I0 = [I0_mag*Math.cos(th), I0_mag*Math.sin(th)];
+  const Zg_net = sum(Xg, Xnet);
+  
+  const Eg = C.add([V0,0], C.mul(I0, Zg_net));
+  const Em = C.sub([V0,0], C.mul(I0, Xm));  
+                               
+  const Ig = C.div(Eg, Zg_net), Im = C.div(Em, Xm);
+  const If = sum(Ig, Im);
+  const Ib = S*1000/(S3*kv);
+  
+  $("o3").innerHTML = T([
+    {h: "Question 4 Results"},
     ["Prefault Voltage V0 (pu)", [V0,0]],
     ["Prefault Current I0 (pu)", I0],
     ["E_g'' (pu)", Eg],
@@ -549,6 +865,9 @@ $("go3").onclick=()=>guard("m10",()=>{
     ["(c) Actual I_f", If, Ib, "A"]
   ]);
 });
+
+// Run initial forms sync
+syncForm();
 </script>
 </body>
 </html>
