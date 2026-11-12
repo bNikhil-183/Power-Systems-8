@@ -36,7 +36,6 @@
     th { @apply bg-slate-50 px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider; }
     td { @apply px-4 py-3 text-sm text-slate-700 whitespace-nowrap; }
     
-    /* Specific target styles for JS-injected elements */
     .inp td input { @apply w-28 text-center px-2 py-1.5 font-mono text-sm mx-auto; }
     .out td.v { @apply font-mono bg-slate-50/50 text-center border-l border-slate-100; }
     
@@ -46,7 +45,6 @@
     .res td:first-child { @apply font-sans font-medium text-slate-700 bg-slate-50/50; }
     .res tr.h td { @apply bg-slate-100 font-sans font-semibold text-slate-900 py-3 px-4 border-y border-slate-200 shadow-sm; }
     
-    /* Utility & Status indicators */
     .msg { @apply text-red-600 text-sm mt-3 font-medium min-h-[1.5em] flex items-center; }
     .msg:not(:empty)::before { content: "⚠"; @apply mr-2 text-lg; }
     
@@ -54,6 +52,7 @@
     .note::before { content: "ℹ"; @apply mr-2 text-blue-500 font-bold text-base leading-none mt-0.5; }
     
     .q { @apply text-slate-800 text-sm mb-6 bg-blue-50/50 p-5 rounded-lg border border-blue-100 leading-relaxed font-medium shadow-sm; }
+    .tag { @apply ml-2 align-middle bg-blue-100 text-blue-800 text-xs font-mono font-medium py-1 px-2 rounded; }
     
     #log { @apply mt-4 pl-6 text-sm text-slate-700 font-mono list-decimal space-y-2 bg-slate-50 p-5 rounded-lg border border-slate-200 max-h-64 overflow-y-auto; }
     #log li::marker { @apply text-slate-400; }
@@ -74,7 +73,6 @@
 
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mt-6">
       <nav class="flex space-x-4 overflow-x-auto pb-2" aria-label="Tabs" id="tabs-container">
-        <!-- Tabs generated/managed by JS for consistency -->
         <button class="tab-btn bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow" data-t="t1">Generalized Interface</button>
         <button class="tab-btn bg-white text-gray-700 border border-gray-300 font-semibold py-2 px-4 rounded-md hover:bg-gray-50" data-t="t2">Solved Questions</button>
       </nav>
@@ -258,96 +256,93 @@
   </section>
 </div>
 
-<!-- ============ TAB 2: SOLVED QUESTIONS ============ -->
+<!-- ============ TAB 2: SOLVED QUESTIONS (Z-bus related only) ============ -->
 <div id="t2" class="tab-body hidden flex-col gap-6 w-full">
 
   <section class="card border-t-4 border-t-blue-600">
-    <h2>Question 1: Fault at bus 2 (Generator 1–Transformer 1–Line 1/2–Transformer 2–Generator 2 System)</h2>
-    <p class="q text-sm"><strong>Scenario:</strong> Base 250 Megavolt-Amperes, 11 Kilovolts on the generator side, 220 Kilovolts on the line side. Transformer 1 is Delta(Generator 1 side)–Star grounded, Transformer 2 is Star grounded–Star grounded, Generator 1 is Star grounded, Generator 2 is Star grounded through Neutral Reactance. <br><br><strong>Find:</strong> (a) Fault current, (b) Line-to-neutral voltages at the fault, (c) Currents and voltages at the generator terminals.</p>
-    
-    <div class="wrap mb-5"><table class="inp !min-w-0" id="eq"></table></div>
-    
-    <div class="row items-end bg-slate-50 p-5 rounded-lg border border-slate-200">
-      <div><label for="xn">Generator 2 Neutral Reactance</label><input id="xn" value="0.03"></div>
-      <div class="!max-w-[200px]">
-        <label for="f4">Fault Type</label>
-        <select id="f4">
-          <option value="LG">Line-to-Ground, phase a (As Asked)</option>
-          <option value="LL">Line-to-Line (b–c)</option>
-          <option value="LLG">Line-to-Line-to-Ground (b–c–ground)</option>
-          <option value="LLL">Three-Phase</option>
-        </select>
-      </div>
-      <div class="!max-w-[100px]"><label for="zf4">Fault Impedance</label><input id="zf4" value="0"></div>
-      <div class="!max-w-[120px]"><label for="S4">Base Megavolt-Amperes</label><input id="S4" value="250"></div>
-      <div class="!max-w-[100px]"><label for="kg">Kilovolts (Generator)</label><input id="kg" value="11"></div>
-      <div class="!max-w-[100px]"><label for="kh">Kilovolts (Line)</label><input id="kh" value="220"></div>
-      <div class="!flex-none"><button id="go4">Calculate Q1</button></div>
+    <h2>Example 4: Build Z-bus step by step <span class="tag">(13-Oct, 4th example)</span></h2>
+    <p class="q"><strong>Question:</strong> Obtain Z<sub>BUS</sub> for the 4-bus sample system (R–1, R–2, 2–3, 1–3). The series impedances of each line are given in the table. Reference bus is R. No line is mutually coupled.</p>
+    <div class="wrap mb-5">
+      <table class="res !mt-0">
+        <tr><th>Line no.</th><th>Bus code (p–q)</th><th>Impedance (Z)</th><th>Type of modification</th></tr>
+        <tr><td>1</td><td>R–1</td><td>0.6</td><td>1 (New bus to reference)</td></tr>
+        <tr><td>2</td><td>R–2</td><td>0.5</td><td>1 (New bus to reference)</td></tr>
+        <tr><td>3</td><td>2–3</td><td>0.5</td><td>2 (New bus to old bus)</td></tr>
+        <tr><td>4</td><td>1–3</td><td>0.25</td><td>4 (Old bus to old bus)</td></tr>
+      </table>
     </div>
-    <div class="msg" id="m7"></div><div id="o4"></div>
+    <div class="flex flex-wrap gap-4">
+      <button id="p4">Solve Example 4</button>
+      <button id="p4i" class="alt">Open result in Generalized Interface</button>
+    </div>
+    <div class="msg" id="m11"></div>
+    <div id="o4a"></div>
   </section>
 
-  <section class="card border-t-4 border-t-blue-500">
-    <h2>Question 2: Radial Network, Three-Phase Fault at F</h2>
-    <p class="q">Find the fault current and the line voltage at the 11 Kilovolts bus during the fault.</p>
-    <div class="row" id="f1"></div>
-    <div class="mt-6 border-t border-slate-100 pt-4 flex justify-end">
-      <button id="go1">Solve Question 2</button>
+  <section class="card border-t-4 border-t-blue-600">
+    <h2>Example 4 (continued): Remove line 1–3 <span class="tag">(13-Oct, 4th example)</span></h2>
+    <p class="q"><strong>Question:</strong> Find the modified bus impedance matrix of the last example if the line from bus 1 to bus 3 is removed. Removal is equivalent to connecting an impedance of −0.25 between old bus 1 and old bus 3 (type-4 modification).</p>
+    <div class="flex flex-wrap gap-4">
+      <button id="p4b">Solve (Remove line 1–3)</button>
+      <button id="p4bi" class="alt">Open result in Generalized Interface</button>
     </div>
-    <div class="msg" id="m8"></div><div id="o1"></div>
-  </section>
-  
-  <section class="card border-t-4 border-t-blue-500">
-    <h2>Question 3: Generator, Transformers, Line and Three Motors</h2>
-    <p class="q">Fault at F (motor side of breaker B). Find (a) subtransient current in the fault, (b) subtransient current in breaker B, (c) momentary current in B, (d) current interrupted by B.</p>
-    <div class="row" id="f2"></div>
-    <div class="mt-6 border-t border-slate-100 pt-4 row items-center justify-between">
-      <div class="!max-w-[250px]">
-        <label for="bs">Breaker Speed Factor</label>
-        <select id="bs">
-          <option value="1.0">8 cycle or slower (1.0x)</option>
-          <option value="1.1" selected>5 cycles (1.1x)</option>
-          <option value="1.2">3 cycles (1.2x)</option>
-          <option value="1.4">2 cycles (1.4x)</option>
-        </select>
-      </div>
-      <div class="!flex-none"><button id="go2">Solve Question 3</button></div>
-    </div>
-    <div class="msg" id="m9"></div><div id="o2"></div>
-  </section>
-
-  <section class="card border-t-4 border-t-blue-500">
-    <h2>Question 4: Generator and Synchronous Motor with Prefault Load</h2>
-    <p class="q">Motor draws 15 MW at 0.8 pf leading, terminal 10.6 kV, symmetrical fault at motor terminals. Find the subtransient current in generator, motor and fault.</p>
-    <div class="row" id="f3"></div>
-    <div class="mt-6 border-t border-slate-100 pt-4 row items-center justify-between">
-      <div class="!max-w-[200px]">
-        <label for="ld">Load Power Factor Type</label>
-        <select id="ld">
-          <option value="1">Leading</option>
-          <option value="-1">Lagging</option>
-        </select>
-      </div>
-      <div class="!flex-none"><button id="go3">Solve Question 4</button></div>
-    </div>
-    <div class="msg" id="m10"></div><div id="o3"></div>
+    <div class="msg" id="m12"></div>
+    <div id="o4b"></div>
   </section>
 
   <section class="card border-t-4 border-t-slate-700">
-    <h2>Question 5: Build Impedance Matrix of 4-bus System</h2>
-    <p class="q mb-5">Impedance Matrix configuration for R–1 0.6, R–2 0.5, 2–3 0.5, 1–3 0.25 using sequential type links. Removing 1–3 is tested as a type-4 link of −0.25.</p>
-    <div class="flex gap-4">
-      <button id="p4">Solve Q5 (Load into Interface)</button>
-      <button id="p4b" class="alt">Solve Q5 Variant (Remove line 1-3)</button>
+    <h2>Example 5: Z-bus by Y-bus inversion and three-phase fault at bus 4 <span class="tag">(13-Oct, 5th example)</span></h2>
+    <p class="q"><strong>Question:</strong> 4-bus system. Buses 1 and 2 are generator buses; 3 and 4 are load buses. Generators: 11 kV, 100 MVA, transient reactance 10% each. Both transformers: 11/110 kV, 100 MVA, leakage reactance 5%. Line reactances on a 100 MVA, 110 kV base: 1–3 j0.15, 1–4 j0.1, 1–2 j0.2, 2–3 j0.1, 2–4 j0.15. Obtain the short circuit solution for a three-phase solid fault on bus 4. Prefault voltages are 1 pu and prefault currents are zero. (Each generator + transformer = j0.10 + j0.05 = j0.15 to reference.)</p>
+    <div class="flex flex-wrap gap-4">
+      <button id="p5">Solve Example 5</button>
+      <button id="p5i" class="alt">Open result in Generalized Interface</button>
     </div>
+    <div class="msg" id="m13"></div>
+    <div id="o5"></div>
   </section>
 
-  <section class="card border-t-4 border-t-slate-700">
-    <h2>Question 6: Admittance Matrix Inversion & Three-Phase Fault at bus 4</h2>
-    <p class="q mb-5">4-bus network utilizing generator branches (Transformer + Generator = j0.15) at buses 1 and 2. Verifies branch current distribution formulas.</p>
-    <div class="flex gap-4">
-      <button id="p5">Solve Q6 (Load into Interface)</button>
+  <section class="card border-t-4 border-t-emerald-600">
+    <h2>Sequence components of unbalanced phase voltages <span class="tag">(14-Oct, 1st example)</span></h2>
+    <p class="q"><strong>Question:</strong> Calculate the sequence components for the given phase voltages for a system with abc as phase sequence: V<sub>a</sub> = 110∠0° kV, V<sub>b</sub> = 88∠−100° kV, V<sub>c</sub> = 80∠175° kV. (α = 1∠120°)</p>
+    <div class="flex flex-wrap gap-4">
+      <button id="q14a">Solve</button>
+      <button id="q14ai" class="alt">Open in Generalized Interface (section 5)</button>
     </div>
+    <div class="msg" id="m14a"></div>
+    <div id="o14a"></div>
+  </section>
+
+  <section class="card border-t-4 border-t-emerald-600">
+    <h2>Sequence components of a balanced load current <span class="tag">(14-Oct, 2nd example)</span></h2>
+    <p class="q"><strong>Question:</strong> A balanced load condition with abc phase sequence has I<sub>a</sub> = 100∠0° A, I<sub>b</sub> = 100∠−120° A, I<sub>c</sub> = 100∠120° A. Obtain the sequence components.</p>
+    <div class="flex flex-wrap gap-4">
+      <button id="q14b">Solve</button>
+      <button id="q14bi" class="alt">Open in Generalized Interface (section 5)</button>
+    </div>
+    <div class="msg" id="m14b"></div>
+    <div id="o14b"></div>
+  </section>
+
+  <section class="card border-t-4 border-t-emerald-600">
+    <h2>Line currents from equal sequence currents <span class="tag">(14-Oct, 3rd example)</span></h2>
+    <p class="q"><strong>Question:</strong> Obtain the line currents for a fault condition when all three sequence current components (computed with reference to phase a) are measured as 10∠30° A.</p>
+    <div class="flex flex-wrap gap-4">
+      <button id="q14c">Solve</button>
+      <button id="q14ci" class="alt">Open in Generalized Interface (section 5)</button>
+    </div>
+    <div class="msg" id="m14c"></div>
+    <div id="o14c"></div>
+  </section>
+
+  <section class="card border-t-4 border-t-rose-600">
+    <h2>Single line-to-ground fault at bus 2 using sequence Z-buses <span class="tag">(23-Oct, 1st example)</span></h2>
+    <p class="q"><strong>Question:</strong> 4-bus system: G1(bus 1)-T1(delta/star-grounded)-bus 2-Line1 || Line2-bus 3-T2(Y-Y grounded)-bus 4-G2 (neutral reactance j0.03). 250 MVA base, 11 kV / 220 kV. X1 = X2 / X0 (pu): G1 0.25/0.05, G2 0.2/0.05, T1 0.06/0.06, T2 0.07/0.07, each line 0.1/0.3. Draw the sequence networks. A single line-to-ground fault on phase a occurs at bus 2 (Zf = 0). Find (a) fault current, (b) line-to-neutral voltages at the fault point, (c) currents and voltages at the generator terminals.</p>
+    <div class="flex flex-wrap gap-4">
+      <button id="q23">Solve</button>
+      <button id="q23i" class="alt">Open in Generalized Interface (sections 4 and 7)</button>
+    </div>
+    <div class="msg" id="m23"></div>
+    <div id="o23"></div>
   </section>
 
 </div>
@@ -378,19 +373,19 @@ document.querySelectorAll("button.tab-btn").forEach(b => {
 /* ===== complex helpers: [re, im] ===== */
 const $ = id => document.getElementById(id);
 const C = {
- add: (a,b) => [a[0]+b[0], a[1]+b[1]], 
- sub: (a,b) => [a[0]-b[0], a[1]-b[1]],
- mul: (a,b) => [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]],
- div: (a,b) => {
-   const d = b[0]*b[0] + b[1]*b[1];
-   if(d < 1e-18) throw new Error("Division by zero (singular case).");
-   return [(a[0]*b[0]+a[1]*b[1])/d, (a[1]*b[0]-a[0]*b[1])/d]
- },
- neg: a => [-a[0], -a[1]], 
- k: (s,a) => [s*a[0], s*a[1]], 
- abs: a => Math.hypot(a[0], a[1]),
- ang: a => Math.atan2(a[1], a[0])*180/Math.PI, 
- par: (a,b) => C.div(C.mul(a,b), C.add(a,b))
+  add: (a,b) => [a[0]+b[0], a[1]+b[1]], 
+  sub: (a,b) => [a[0]-b[0], a[1]-b[1]],
+  mul: (a,b) => [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]],
+  div: (a,b) => {
+    const d = b[0]*b[0] + b[1]*b[1];
+    if(d < 1e-18) throw new Error("Division by zero (singular case).");
+    return [(a[0]*b[0]+a[1]*b[1])/d, (a[1]*b[0]-a[0]*b[1])/d];
+  },
+  neg: a => [-a[0], -a[1]], 
+  k: (s,a) => [s*a[0], s*a[1]], 
+  abs: a => Math.hypot(a[0], a[1]),
+  ang: a => Math.atan2(a[1], a[0])*180/Math.PI, 
+  par: (a,b) => C.div(C.mul(a,b), C.add(a,b))
 };
 const J = x => [0, x], Rl = x => [x, 0], Pl = (m,d) => [m*Math.cos(d*Math.PI/180), m*Math.sin(d*Math.PI/180)];
 const AL = Pl(1, 120), AL2 = Pl(1, 240), S3 = Math.sqrt(3);
@@ -433,11 +428,6 @@ const gv = id => {
   return v;
 };
 
-/* Form Builder Helper for Inputs injected dynamically */
-function mk(id, f) {
-  $(id).innerHTML = f.map(([k,l,v]) => '<div class="flex-auto min-w-[130px] max-w-[200px]"><label for="'+k+'">'+l+'</label><input id="'+k+'" value="'+v+'"></div>').join("");
-}
-
 /* Result table renderer */
 function T(rows) {
   let h = '<div class="overflow-x-auto"><table class="res"><tr><th>Quantity</th><th>Rectangular</th><th>Polar</th><th>Actual</th></tr>';
@@ -452,6 +442,12 @@ function T(rows) {
 
 function matT(M, id) {
   $(id).innerHTML = M.length ? '<tr><th></th>' + M.map((_,i) => "<th>Bus " + (i+1) + "</th>").join("") + "</tr>" + M.map((r,i) => "<tr><th>Bus " + (i+1) + "</th>" + r.map(c => '<td class="v">' + ($("fmt").value === "polar" ? fp(c) : fr(c)) + "</td>").join("") + "</tr>").join("") : '<tr><td class="p-6 text-center text-slate-500 italic">The matrix is empty. Add a Type 1 branch to create bus 1.</td></tr>';
+}
+
+/* Matrix as a standalone HTML string (used for inline solved-question output) */
+function matHTML(M) {
+  return '<div class="wrap"><table class="out"><tr><th></th>' + M.map((_,i) => "<th>Bus " + (i+1) + "</th>").join("") + "</tr>" +
+    M.map((r,i) => "<tr><th>Bus " + (i+1) + "</th>" + r.map(c => '<td class="v">' + fr(c) + "</td>").join("") + "</tr>").join("") + "</table></div>";
 }
 
 const toSeq = v => [C.k(1/3, sum(v[0], v[1], v[2])), C.k(1/3, sum(v[0], C.mul(AL, v[1]), C.mul(AL2, v[2]))), C.k(1/3, sum(v[0], C.mul(AL2, v[1]), C.mul(AL, v[2])))];
@@ -471,7 +467,7 @@ function buildGrid() {
     h += "</tr>";
   }
   $("inp").innerHTML = n ? h : "";
-  $("m1").textContent = n ? "" : "Empty network selected. Click “Use Entered Matrix”, then add Type 1 branches from the reference.";
+  $("m1").textContent = n ? "" : "Empty network selected. Click “Load Entered Matrix”, then add Type 1 branches from the reference.";
 }
 
 function loadMatrix() {
@@ -584,22 +580,9 @@ function jumpToTab1() {
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-/* Question 5 presets */
-function ex4(rem) {
-  guard("m2", () => {
-    jumpToTab1();
-    Z = []; hist = [];
-    [{t:1, p:1, z:"0.6"}, {t:1, p:2, z:"0.5"}, {t:2, p:3, k:2, z:"0.5"}, {t:4, j:1, k:3, z:"0.25"}].forEach(runOp);
-    $("br").value = "1 0 0.6\n2 0 0.5\n2 3 0.5\n1 3 0.25";
-    if(rem) { runOp({t:5, j:1, k:3, zo:"0.25", zn:""}); $("br").value = "1 0 0.6\n2 0 0.5\n2 3 0.5"; }
-    logR(); render(); $("fb").value = 1;
-  });
-}
-$("p4").onclick = () => ex4(false); $("p4b").onclick = () => ex4(true);
-
 /* branch list, Ybus, inverse */
-function branches() {
-  const L = $("br").value.split("\n").map(s => s.trim()).filter(Boolean);
+function branches(src) {
+  const L = (src !== undefined ? src : $("br").value).split("\n").map(s => s.trim()).filter(Boolean);
   if(!L.length) throw new Error("Branch list is empty.");
   return L.map((s, i) => {
     const t = s.split(/\s+/);
@@ -628,8 +611,8 @@ function inv(M) {
   return A.map(r => r.slice(n));
 }
 
-function buildZfromBranches() {
-  const B = branches(), n = Math.max(...B.map(x => Math.max(x.a, x.b)));
+function yzOf(B) {
+  const n = Math.max(...B.map(x => Math.max(x.a, x.b)));
   const Y = Array.from({length:n}, () => Array.from({length:n}, () => [0,0]));
   for(const x of B) {
     const y = C.div([1,0], x.z);
@@ -640,13 +623,19 @@ function buildZfromBranches() {
       Y[x.b-1][x.a-1] = C.sub(Y[x.b-1][x.a-1], y);
     }
   }
-  matT(Y, "yb");
-  Z = inv(Y); hist = [{ Z: [], tx: "Impedance Matrix obtained by inverting Admittance Matrix of the branch list" }]; logR(); render();
+  return { Y, Zm: inv(Y) };
+}
+
+function buildZfromBranches() {
+  const r = yzOf(branches());
+  matT(r.Y, "yb");
+  Z = r.Zm; hist = [{ Z: [], tx: "Impedance Matrix obtained by inverting Admittance Matrix of the branch list" }]; logR(); render();
+  return r.Y;
 }
 $("byb").onclick = () => guard("m3", buildZfromBranches);
 
 /* 3-phase fault from Zbus */
-function zFault() {
+function zFaultHTML() {
   const n = Z.length, r = parseInt($("fb").value);
   if(!n) throw new Error("Build an Impedance Matrix first.");
   chk(r, n, "Fault bus", false);
@@ -672,15 +661,10 @@ function zFault() {
       }
     });
   }
-  $("fout").innerHTML = T(rows);
+  return T(rows);
 }
+function zFault() { $("fout").innerHTML = zFaultHTML(); }
 $("fgo").onclick = () => guard("m4", zFault);
-
-$("p5").onclick = () => {
-  jumpToTab1();
-  $("br").value = "1 0 j0.15 1\n2 0 j0.15 1\n1 3 j0.15\n1 4 j0.1\n1 2 j0.2\n2 3 j0.1\n2 4 j0.15";
-  guard("m3", () => { buildZfromBranches(); $("fb").value = 4; $("fz").value = "0"; zFault(); });
-};
 
 /* ===== Sequence components ===== */
 function seqGo() {
@@ -709,7 +693,7 @@ $("zgo").onclick = () => guard("m5", () => {
   $("zout").innerHTML = T([["Zero Sequence = Self Impedance + 2 × Mutual Impedance", C.add(s, C.k(2, m))], ["Positive Sequence = Self Impedance − Mutual Impedance", C.sub(s, m)], ["Negative Sequence = Self Impedance − Mutual Impedance", C.sub(s, m)]]);
 });
 
-/* ===== Fault formulas ===== */
+/* ===== Fault formulas (Thevenin solver) ===== */
 function faultCalc(type, V, Z1, Z2, Z0, Zf) {
   let I1, I2, I0;
   if(type === "LG") {
@@ -737,144 +721,134 @@ $("ggo").onclick = () => guard("m6", () => {
   ]);
 });
 
-/* ---- Question Solvers ---- */
-(function() {
-  const D = { G1: [.25, .25, .05], G2: [.2, .2, .05], T1: [.06, .06, .06], T2: [.07, .07, .07], L1: [.1, .1, .3], L2: [.1, .1, .3] };
-  const N = { G1: "Generator 1", G2: "Generator 2", T1: "Transformer 1", T2: "Transformer 2", L1: "Line 1", L2: "Line 2" };
-  $("eq").innerHTML = '<tr><th class="!bg-slate-100 border-b border-slate-200">Equipment</th><th class="!bg-slate-100 border-b border-slate-200">Positive Sequence (per unit)</th><th class="!bg-slate-100 border-b border-slate-200">Negative Sequence (per unit)</th><th class="!bg-slate-100 border-b border-slate-200">Zero Sequence (per unit)</th></tr>' + 
-  Object.keys(D).map(k => "<tr><td class='font-medium bg-slate-50 border-b border-slate-100'>" + N[k] + "</td>" + [1, 2, 0].map((s, i) => '<td class="border-b border-slate-100"><input class="!w-20 !py-1 !text-center mx-auto" id="' + k + '_' + s + '" value="' + D[k][i] + '"></td>').join("") + "</tr>").join("");
-})();
+/* ===== SOLVED QUESTIONS (Z-bus related) ===== */
+const EX4_BR = "1 0 0.6\n2 0 0.5\n2 3 0.5\n1 3 0.25";
+const EX4_OPS = [{t:1, p:1, z:"0.6"}, {t:1, p:2, z:"0.5"}, {t:2, p:3, k:2, z:"0.5"}, {t:4, j:1, k:3, z:"0.25"}];
 
-$("go4").onclick = () => guard("m7", () => {
-  const x = (n, s) => gv(n + "_" + s), xn = gv("xn"), Sb = gv("S4"), kg = gv("kg"), kh = gv("kh"), zf = parseC($("zf4").value);
-  const Zl = [], Zr = [], Zs = [];
-  [0, 1, 2].forEach(s => {
-    Zl[s] = J(s === 0 ? x("T1", 0) : x("G1", s) + x("T1", s));
-    Zr[s] = J(x("L1", s)*x("L2", s)/(x("L1", s) + x("L2", s)) + x("T2", s) + x("G2", s) + (s === 0 ? 3*xn : 0));
-    Zs[s] = C.par(Zl[s], Zr[s]);
-  });
-  
-  const f = faultCalc($("f4").value, [1,0], Zs[1], Zs[2], Zs[0], zf);
-  const IbH = Sb/(S3*kh)*1000, IbG = Sb/(S3*kg)*1000, pH = toAbc(f.I), vH = toAbc(f.V);
-  
-  const sh2 = s => C.div(Zl[s], C.add(Zl[s], Zr[s])), sh1 = s => C.div(Zr[s], C.add(Zl[s], Zr[s]));
-  const I2g = [0, 1, 2].map(s => C.mul(f.I[s], sh2(s)));
-  const V2g = [C.neg(C.mul(I2g[0], J(x("G2", 0) + 3*xn))), C.sub([1,0], C.mul(I2g[1], J(x("G2", 1)))), C.neg(C.mul(I2g[2], J(x("G2", 2))))];
-  const I1g = [[0,0], C.mul(f.I[1], sh1(1)), C.mul(f.I[2], sh1(2))];
-  const V1g = [[0,0], C.sub([1,0], C.mul(I1g[1], J(x("G1", 1)))), C.neg(C.mul(I1g[2], J(x("G1", 2))))];
-  
-  const rot = a => [a[0], C.mul(a[1], Pl(1, -30)), C.mul(a[2], Pl(1, 30))];
-  const I1s = rot(I1g), V1s = rot(V1g), pI2 = toAbc(I2g), pV2 = toAbc(V2g), pI1 = toAbc(I1s), pV1 = toAbc(V1s);
-  const ln = kg/S3, lh = kh/S3, nm = ["a", "b", "c"], R = [];
-  
-  R.push({h: "Equivalent sequence impedances at bus 2"}, ["Positive Sequence (Generator 1+Transformer 1) ∥ (Line 1∥Line 2 + Transformer 2 + Generator 2)", Zs[1]], ["Negative Sequence", Zs[2]], ["Zero Sequence = Transformer 1 ∥ (Line 1∥Line 2 + Transformer 2 + Generator 2 + 3 × Neutral Reactance)", Zs[0]]);
-  R.push({h: "(a) Fault current"}, ["Zero Sequence Current a", f.I[0]], ["Positive Sequence Current a", f.I[1]], ["Negative Sequence Current a", f.I[2]]);
-  nm.forEach((n,i) => R.push(["Current "+n+" (base "+IbH.toFixed(2)+" Amperes)", pH[i], IbH, "Amperes"]));
-  
-  R.push({h: "(b) Line-to-neutral voltages at the fault point"});
-  nm.forEach((n,i) => R.push(["Voltage "+n, vH[i], lh, "Kilovolts"]));
-  
-  R.push({h: "(c) Generator 2 terminals (no phase shift, Transformer 2 is Star-Star)"}, ["Sequence currents Zero | Positive | Negative", fr(I2g[0])+"  |  "+fr(I2g[1])+"  |  "+fr(I2g[2])]);
-  nm.forEach((n,i) => R.push(["Current "+n+" (base "+IbG.toFixed(2)+" Amperes)", pI2[i], IbG, "Amperes"]));
-  nm.forEach((n,i) => R.push(["Voltage "+n, pV2[i], ln, "Kilovolts"]));
-  
-  R.push({h: "(c) Generator 1 terminals (after Delta–Star shift: positive sequence −30°, negative sequence +30°, zero sequence blocked)"});
-  nm.forEach((n,i) => R.push(["Current "+n, pI1[i], IbG, "Amperes"]));
-  nm.forEach((n,i) => R.push(["Voltage "+n, pV1[i], ln, "Kilovolts"]));
-  
-  $("o4").innerHTML = T(R) + '<p class="note"><strong>Slide comparison (Line-to-Ground, Fault Impedance = 0):</strong> The slide rounds Positive Sequence = Negative Sequence = j0.157, giving 2.74 per unit; unrounded values give 2.73 per unit, so small differences are expected. In the slide, base current at Generator 1 is printed as 2.40∠270°; the computed angle is 90° (Current a = 2.40∠270°, Current c = 0). The slide also writes 0.566 for the Generator 1 Voltage a and Voltage b magnitudes, while 0.556 per unit is what its matrix result gives.</p>';
-});
+/* Example 4: build step by step; returns the matrix after each step */
+function ex4build() {
+  Z = []; hist = [];
+  const steps = [];
+  EX4_OPS.forEach(o => { runOp(o); steps.push({ tx: hist[hist.length-1].tx, M: Z }); });
+  $("br").value = EX4_BR;
+  return steps;
+}
 
-/* ===== radial pu problems ===== */
-mk("f1", [["a_S", "Base Megavolt-Amperes", 100], ["a_kg", "Kilovolts Generator", 11], ["a_kl", "Kilovolts Line", 33], ["a_kc", "Kilovolts Cable", 6.6],
- ["a_g1", "Generator 1 Megavolt-Amperes", 10], ["a_g1x", "Generator 1 Reactance %", 15], ["a_g2", "Generator 2 Megavolt-Amperes", 10], ["a_g2x", "Generator 2 Reactance %", 12.5],
- ["a_t1", "Transformer 1 Megavolt-Amperes", 10], ["a_t1x", "Transformer 1 Reactance %", 10], ["a_t2", "Transformer 2 Megavolt-Amperes", 5], ["a_t2x", "Transformer 2 Reactance %", 8],
- ["a_ll", "Line Kilometers", 30], ["a_lr", "Resistance Ohms/Kilometer", 0.27], ["a_lx", "Reactance Ohms/Kilometer", 0.36], ["a_cl", "Cable Kilometers", 3], ["a_cr", "Resistance Ohms/Kilometer", 0.135], ["a_cx", "Reactance Ohms/Kilometer", 0.08]]);
+function ex4solve() {
+  const st = ex4build();
+  logR(); render(); $("fb").value = 1;
+  $("o4a").innerHTML = st.map((s, i) => '<h3>Step ' + (i+1) + ': ' + s.tx + '</h3>' + matHTML(s.M)).join("") +
+    '<p class="note">Slide result after Step 4: Z11 = 0.405405, Z12 = 0.162162, Z13 = 0.324324, Z22 = 0.364865, Z23 = 0.229730, Z33 = 0.459459 (P = Z11 + Z33 − 2·Z13 + 0.25 = 1.85). Raise the Decimals box above to 6 to compare digit by digit.</p>';
+}
 
-$("go1").onclick = () => guard("m8", () => {
-  const S = gv("a_S"), pu = (m,p) => J(p/100*S/m);
-  const G1 = pu(gv("a_g1"), gv("a_g1x")), G2 = pu(gv("a_g2"), gv("a_g2x")), T1 = pu(gv("a_t1"), gv("a_t1x")), T2 = pu(gv("a_t2"), gv("a_t2x"));
-  const Zl = C.k(gv("a_ll")*S/Math.pow(gv("a_kl"), 2), [gv("a_lr"), gv("a_lx")]);
-  const Zc = C.k(gv("a_cl")*S/Math.pow(gv("a_kc"), 2), [gv("a_cr"), gv("a_cx")]);
-  const Zg = C.par(G1, G2), Ztot = sum(Zg, T1, Zl, T2, Zc);
-  const Isc = C.div([1,0], Ztot), Ib = S*1000/(S3*gv("a_kc"));
-  const Zbus11 = sum(T1, Zl, T2, Zc), V11 = C.mul(Isc, Zbus11);
-  
-  $("o1").innerHTML = T([
-    {h: "Question 2 Results"},
-    ["Total Impedance (per unit)", Ztot],
-    ["Short Circuit Current (per unit)", Isc],
-    ["Short Circuit Current (Actual)", Isc, Ib, "Amperes"],
-    ["Voltage at 11 Kilovolts bus (per unit)", V11],
-    ["Voltage at 11 Kilovolts bus (Actual)", V11, gv("a_kg")/S3, "Kilovolts (Line-to-Neutral)"]
-  ]);
-});
+function ex4remove() {
+  ex4build();
+  const M = Z;
+  const P = sum(M[0][0], M[2][2], C.k(-2, M[0][2]), Rl(-0.25));
+  runOp({t:5, j:1, k:3, zo:"0.25", zn:""});
+  $("br").value = "1 0 0.6\n2 0 0.5\n2 3 0.5";
+  logR(); render(); $("fb").value = 1;
+  $("o4b").innerHTML = '<h3>' + hist[hist.length-1].tx + '</h3>' +
+    '<p class="note">P = Z11 + Z33 − 2·Z13 − 0.25 = ' + P[0].toFixed(6) + ' (slide: −0.033784). Z-bus after removing line 1–3 returns to the matrix of Step 3, as expected since only buses 1 and 2 connect to reference.</p>' + matHTML(Z);
+}
 
-mk("f2", [["b_S", "Base Megavolt-Amperes", 25], ["b_G", "Generator Megavolt-Amperes", 25], ["b_Gx", "Generator Reactance %", 20],
- ["b_t1", "Transformer 1 Megavolt-Amperes", 25], ["b_t1x", "Transformer 1 Reactance %", 10], ["b_t2", "Transformer 2 Megavolt-Amperes", 25], ["b_t2x", "Transformer 2 Reactance %", 10],
- ["b_lx", "Line Reactance %", 15], ["b_m", "Motor Megavolt-Amperes", 5], ["b_mx2", "Motor Subtransient Reactance %", 25], ["b_mx1", "Motor Transient Reactance %", 30],
- ["b_kv", "Motor Kilovolts", 6.6]]);
+function ex5solve() {
+  $("br").value = "1 0 j0.15 1\n2 0 j0.15 1\n1 3 j0.15\n1 4 j0.1\n1 2 j0.2\n2 3 j0.1\n2 4 j0.15";
+  const Y = buildZfromBranches();
+  $("fb").value = 4; $("fz").value = "0"; $("fv").value = "1";
+  zFault();
+  $("o5").innerHTML = '<h3>Y-bus (per unit)</h3>' + matHTML(Y) +
+    '<h3>Z-bus = inverse of Y-bus (per unit)</h3>' + matHTML(Z) +
+    '<h3>Three-phase solid fault at bus 4</h3>' + $("fout").innerHTML +
+    '<p class="note">Slide results: Z44 = j0.1356, fault current = −j7.3746 pu, V1 = 0.4248, V2 = 0.4698, V3 = 0.4521, V4 = 0 pu. Fault current at bus 1 (or 2) would be 1/Z11 = −j11.0742 pu, read directly from the same Z-bus.</p>';
+}
 
-$("go2").onclick = () => guard("m9", () => {
-  const S = gv("b_S"), pu = (m,p) => J(p/100*S/m);
-  const G = pu(gv("b_G"), gv("b_Gx")), T1 = pu(gv("b_t1"), gv("b_t1x")), T2 = pu(gv("b_t2"), gv("b_t2x")), L = J(gv("b_lx")/100);
-  const Zs = sum(G, T1, L, T2);
-  const M2 = pu(gv("b_m"), gv("b_mx2")), M1 = pu(gv("b_m"), gv("b_mx1"));
-  
-  const Isc_pu = sum(C.div([1,0], Zs), C.k(3, C.div([1,0], M2)));
-  const IscB_pu = sum(C.div([1,0], Zs), C.k(2, C.div([1,0], M2)));
-  const IintB_pu = sum(C.div([1,0], Zs), C.k(2, C.div([1,0], M1)));
-  const Ib = S*1000/(S3*gv("b_kv"));
-  const bs = parseFloat($("bs").value);
-  
-  $("o2").innerHTML = T([
-    {h: "Question 3 Results"},
-    ["(a) Subtransient Short Circuit Current in fault (per unit)", Isc_pu],
-    ["(a) Actual Short Circuit Current", Isc_pu, Ib, "Amperes"],
-    ["(b) Subtransient Short Circuit Current in breaker B (per unit)", IscB_pu],
-    ["(b) Actual Short Circuit Current in breaker B", IscB_pu, Ib, "Amperes"],
-    ["(c) Momentary current in B (1.6 × Short Circuit Current in B)", IscB_pu, Ib*1.6, "Amperes"],
-    ["(d) Interrupted current (per unit, using Transient Reactance)", IintB_pu],
-    ["(d) Actual Interrupted current ("+bs+" multiplier)", IintB_pu, Ib*bs, "Amperes"]
-  ]);
-});
+$("p4").onclick = () => guard("m11", ex4solve);
+$("p4i").onclick = () => guard("m11", () => { ex4solve(); jumpToTab1(); });
+$("p4b").onclick = () => guard("m12", ex4remove);
+$("p4bi").onclick = () => guard("m12", () => { ex4remove(); jumpToTab1(); });
+$("p5").onclick = () => guard("m13", ex5solve);
+$("p5i").onclick = () => guard("m13", () => { ex5solve(); jumpToTab1(); });
 
-mk("f3", [["c_S", "Base Megavolt-Amperes", 25], ["c_kv", "Generator/Motor Kilovolts", 11],
- ["c_g", "Generator Reactance %", 15], ["c_m", "Motor Reactance %", 15],
- ["c_t1", "Transformer 1 Reactance %", 10], ["c_t2", "Transformer 2 Reactance %", 10], ["c_l", "Line Reactance %", 10],
- ["c_mw", "Load Megawatts", 15], ["c_pf", "Power Factor", 0.8], ["c_v", "Prefault Kilovolts", 10.6]]);
+/* 14-Oct sequence component examples */
+function q14a() {
+  const s = toSeq([Pl(110,0), Pl(88,-100), Pl(80,175)]);
+  $("o14a").innerHTML = T([
+    {h: "[Va0 Va1 Va2]ᵀ = (1/3)·[[1,1,1],[1,α,α²],[1,α²,α]]·[Va Vb Vc]ᵀ"},
+    ["Zero sequence Va0", s[0], 1, "kV"], ["Positive sequence Va1", s[1], 1, "kV"], ["Negative sequence Va2", s[2], 1, "kV"]
+  ]) + '<p class="note">Slide result: Va0 = 27.03∠−79.32°, Va1 = 85.68∠21.83°, Va2 = 26.01∠−11.78° kV.</p>';
+}
+function q14b() {
+  const s = toSeq([Pl(100,0), Pl(100,-120), Pl(100,120)]);
+  $("o14b").innerHTML = T([
+    {h: "Balanced abc set"},
+    ["Zero sequence Ia0", s[0], 1, "A"], ["Positive sequence Ia1", s[1], 1, "A"], ["Negative sequence Ia2", s[2], 1, "A"]
+  ]) + '<p class="note">Slide result: Ia0 = 0, Ia1 = 100∠0° A, Ia2 = 0. Only the positive sequence exists and it equals Ia.</p>';
+}
+function q14c() {
+  const p = toAbc([Pl(10,30), Pl(10,30), Pl(10,30)]);
+  $("o14c").innerHTML = T([
+    {h: "[Ia Ib Ic]ᵀ = [[1,1,1],[1,α²,α],[1,α,α²]]·[Ia0 Ia1 Ia2]ᵀ"},
+    ["Line current Ia", p[0], 1, "A"], ["Line current Ib", p[1], 1, "A"], ["Line current Ic", p[2], 1, "A"]
+  ]) + '<p class="note">Slide result: Ia = 30∠30° A, Ib = Ic = 0.</p>';
+}
+$("q14a").onclick = () => guard("m14a", q14a);
+$("q14b").onclick = () => guard("m14b", q14b);
+$("q14c").onclick = () => guard("m14c", q14c);
+$("q14ai").onclick = () => { jumpToTab1(); $("s1").click(); };
+$("q14bi").onclick = () => { jumpToTab1(); $("s2").click(); };
+$("q14ci").onclick = () => { jumpToTab1(); $("s3").click(); };
 
-$("go3").onclick = () => guard("m10", () => {
-  const S = gv("c_S"), kv = gv("c_kv"), V0 = gv("c_v")/kv;
-  const Xg = J(gv("c_g")/100), Xm = J(gv("c_m")/100);
-  const Xnet = J((gv("c_t1")+gv("c_t2")+gv("c_l"))/100);
-  const ld_sgn = parseFloat($("ld").value), pf = gv("c_pf"), th = ld_sgn*Math.acos(pf);
-  
-  const I0_mag = (gv("c_mw")/S)/(V0*pf);
-  const I0 = [I0_mag*Math.cos(th), I0_mag*Math.sin(th)];
-  const Zg_net = sum(Xg, Xnet);
-  
-  const Eg = C.add([V0,0], C.mul(I0, Zg_net));
-  const Em = C.sub([V0,0], C.mul(I0, Xm));
-  
-  const Ig = C.div(Eg, Zg_net), Im = C.div(Em, Xm);
-  const If = sum(Ig, Im);
-  const Ib = S*1000/(S3*kv);
-  
-  $("o3").innerHTML = T([
-    {h: "Question 4 Results"},
-    ["Prefault Voltage (per unit)", [V0,0]],
-    ["Prefault Current (per unit)", I0],
-    ["Subtransient Generator Voltage (per unit)", Eg],
-    ["Subtransient Motor Voltage (per unit)", Em],
-    ["(a) Subtransient Generator Current (per unit)", Ig],
-    ["(a) Actual Subtransient Generator Current", Ig, Ib, "Amperes"],
-    ["(b) Subtransient Motor Current (per unit)", Im],
-    ["(b) Actual Subtransient Motor Current", Im, Ib, "Amperes"],
-    ["(c) Fault current (per unit)", If],
-    ["(c) Actual Fault current", If, Ib, "Amperes"]
-  ]);
-});
+/* 23-Oct: LG fault at bus 2 using sequence Z-buses */
+const SEQ23 = {
+  p: "1 0 j0.25\n4 0 j0.2\n1 2 j0.06\n2 3 j0.1\n2 3 j0.1\n3 4 j0.07",
+  z: "1 0 j0.05\n2 0 j0.06\n2 3 j0.3\n2 3 j0.3\n3 4 j0.07\n4 0 j0.14"   /* j0.14 = j0.05 + 3 x j0.03 */
+};
+function q23zs() {
+  const Z1 = yzOf(branches(SEQ23.p)).Zm, Z0 = yzOf(branches(SEQ23.z)).Zm;
+  return [Z1, Z1, Z0];   /* negative network = positive network */
+}
+function q23() {
+  const [Z1, Z2, Z0] = q23zs(), f = 1;
+  const If = C.div([1,0], sum(Z1[f][f], Z2[f][f], Z0[f][f]));
+  const Vs = i => [C.neg(C.mul(Z0[i][f], If)), C.sub([1,0], C.mul(Z1[i][f], If)), C.neg(C.mul(Z2[i][f], If))];
+  const gen = (b, zg1, zg2, zg0, sh) => {
+    const v = Vs(b-1);
+    const i = [C.div(C.neg(v[0]), zg0), C.div(C.sub([1,0], v[1]), zg1), C.div(C.neg(v[2]), zg2)];
+    if(sh) { i[1] = C.mul(i[1], Pl(1,-30)); i[2] = C.mul(i[2], Pl(1,30)); v[1] = C.mul(v[1], Pl(1,-30)); v[2] = C.mul(v[2], Pl(1,30)); }
+    return { I: toAbc(i), V: toAbc(v) };
+  };
+  const g1 = gen(1, J(0.25), J(0.25), J(0.05), true), g2 = gen(4, J(0.2), J(0.2), J(0.14), false);
+  const I220 = 250/(S3*220)*1000, I11 = 250/(S3*11)*1000, k220 = 220/S3, k11 = 11/S3;
+  const fv = toAbc(Vs(f));
+  $("o23").innerHTML =
+    '<h3>Sequence Z-bus at the fault bus (diagonal element 2,2)</h3>' +
+    T([["Z1 = Z-bus(2,2) positive", Z1[f][f]], ["Z2 = Z-bus(2,2) negative", Z2[f][f]], ["Z0 = Z-bus(2,2) zero", Z0[f][f]]]) +
+    '<h3>Positive-sequence Z-bus</h3>' + matHTML(Z1) + '<h3>Zero-sequence Z-bus</h3>' + matHTML(Z0) +
+    T([
+      {h: "(a) Fault current: Ia0 = Ia1 = Ia2 = 1 / (Z1 + Z2 + Z0)"},
+      ["Ia1 = Ia2 = Ia0", If],
+      ["Fault current Ia = 3 Ia0 (base " + I220.toFixed(2) + " A)", C.k(3, If), I220, "A"],
+      {h: "(b) Line-to-neutral voltages at fault point F (bus 2), base 220 kV"},
+      ["Va", fv[0], k220, "kV"], ["Vb", fv[1], k220, "kV"], ["Vc", fv[2], k220, "kV"],
+      {h: "(c) Generator G2 terminals (bus 4), base current " + I11.toFixed(2) + " A, no phase shift (Y-Y)"},
+      ["Ia", g2.I[0], I11, "A"], ["Ib", g2.I[1], I11, "A"], ["Ic", g2.I[2], I11, "A"],
+      ["Va", g2.V[0], k11, "kV"], ["Vb", g2.V[1], k11, "kV"], ["Vc", g2.V[2], k11, "kV"],
+      {h: "(c) Generator G1 terminals (bus 1), positive -30 deg, negative +30 deg (delta side)"},
+      ["Ia", g1.I[0], I11, "A"], ["Ib", g1.I[1], I11, "A"], ["Ic", g1.I[2], I11, "A"],
+      ["Va", g1.V[0], k11, "kV"], ["Vb", g1.V[1], k11, "kV"], ["Vc", g1.V[2], k11, "kV"]
+    ]) +
+    '<p class="note">Slide result (rounded Z1 = Z2 = j0.157, Z0 = j0.051): Ia0 = Ia1 = Ia2 = -j2.74 pu, fault current 5392.9 A; Vb = 113.18 kV, Vc = 113.63 kV; G2 currents 40545.73 / 12596.72 / 12596.72 A; G1 currents 31491.81 / 31491.81 / 0 A. The exact Z-bus gives slightly different digits because the slide rounds the equivalents to three decimals.</p>';
+}
+function q23open() {
+  const zs = q23zs(), f = 1, jv = M => "j" + M[f][f][1].toFixed(6);
+  $("br").value = SEQ23.p; buildZfromBranches();
+  $("fb").value = 2; $("g1").value = jv(zs[0]); $("g2").value = jv(zs[1]); $("g0").value = jv(zs[2]);
+  $("ft").value = "LG"; $("gf").value = "0"; $("gV").value = "1"; $("gS").value = "250"; $("gk").value = "220";
+  $("ggo").click();
+}
+$("q23").onclick = () => guard("m23", q23);
+$("q23i").onclick = () => guard("m23", () => { q23open(); jumpToTab1(); });
 
 // Run initial forms sync
 syncForm();
