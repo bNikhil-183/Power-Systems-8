@@ -89,173 +89,165 @@
 
 <main class="max-w-6xl mx-auto px-6 py-8">
 
-<!-- ============ TAB 1: GENERALIZED INTERFACE ============ -->
-<div id="t1" class="tab-body flex flex-col gap-6 w-full">
-  
-  <section class="card bg-blue-50/50 border-blue-200">
-    <h2 class="text-blue-800 border-blue-200">How to Use This Portal</h2>
-    <ol class="list-decimal list-inside space-y-2 text-slate-700 text-sm">
-      <li><strong>Initial Impedance Matrix:</strong> Enter the number of buses and click "Create Matrix Grid".</li>
-      <li><strong>Fill Matrix:</strong> Fill in the impedance values in the grid, then click "Load Entered Matrix" to lock it in.</li>
-      <li><strong>Modify Network:</strong> Go to "Topology Modification", select the modification type, input the parameters, and click "Apply Change".</li>
-      <li><strong>Analyze:</strong> Scroll down to use the Sequence Components or Fault Analysis tools based on your current network.</li>
-    </ol>
-  </section>
+<!-- ============ TAB 1: GENERALIZED INTERFACE (crisp, 7 divisions) ============ -->
+<style>
+  #t1 .card{padding:1rem 1.25rem;margin-bottom:0}
+  #t1 h2{font-size:.95rem;margin-bottom:.75rem;padding-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+  #t1 h3{margin:1rem 0 .5rem;font-size:.85rem}
+  #t1 .num{display:inline-flex;width:1.4rem;height:1.4rem;border-radius:9999px;background:#2563eb;color:#fff;font-size:.75rem;align-items:center;justify-content:center;flex:none}
+  #t1 .q{padding:.6rem .9rem;margin-bottom:.75rem;font-weight:400;font-size:.8rem}
+  #t1 .note{margin-top:.6rem;padding:.6rem .9rem;font-size:.8rem}
+  #t1 .msg{margin-top:.4rem;min-height:0}
+  #t1 .row{gap:.75rem}
+  #t1 button{padding:.45rem .9rem;font-size:.8rem}
+  #t1 #log{max-height:7rem;margin-top:.5rem;padding:.6rem .6rem .6rem 2rem}
+  #t1 .pair{display:grid;grid-template-columns:1fr;gap:1.25rem}
+  @media(min-width:1024px){#t1 .pair{grid-template-columns:5fr 7fr}}
+  #t1 .steps{display:flex;flex-wrap:wrap;gap:.5rem;font-size:.78rem;color:#475569}
+  #t1 .steps span{background:#fff;border:1px solid #e2e8f0;border-radius:9999px;padding:.2rem .7rem}
+</style>
+<div id="t1" class="tab-body flex flex-col gap-4 w-full">
 
-  <section class="card">
-    <h2>1. Initial Impedance Matrix Configuration</h2>
-    <div class="row">
-      <div>
-        <label for="n">Number of buses N <span class="text-slate-400 font-normal ml-1">(0 = empty)</span></label>
-        <input id="n" type="number" min="0" max="30" value="3">
-      </div>
-      <div class="flex gap-3 !flex-none mt-2">
-        <button id="mk">Create Matrix Grid</button>
-        <button id="load" class="alt">Load Entered Matrix</button>
-        <button id="sym" class="alt">Mirror (Upper to Lower)</button>
-      </div>
-    </div>
-    <div class="wrap"><table class="inp" id="inp"></table></div>
-    <div class="msg" id="m1"></div>
-  </section>
+  <div class="steps">
+    <span><b>Workflow:</b></span>
+    <span>1 Enter Z-bus</span><span>→ 2 Choose change type</span><span>→ 3 New Z-bus shown &amp; logged</span><span>→ 4–7 Optional analysis</span>
+  </div>
 
-  <section class="card">
-    <h2>2. Topology Modification</h2>
-    <div class="row items-end">
-      <div class="!max-w-[320px]">
-        <label for="type">Type of network change</label>
-        <select id="type">
-          <option value="1">Type 1: New bus p to reference</option>
-          <option value="2">Type 2: New bus p to existing bus k</option>
-          <option value="3">Type 3: Existing bus k to reference</option>
-          <option value="4">Type 4: Existing bus j to existing bus k</option>
-          <option value="5">Type 5: Change or remove branch j–k</option>
-        </select>
+  <div class="pair">
+    <!-- 1 -->
+    <section class="card">
+      <h2><span class="num">1</span>Initial Z-bus (N buses)</h2>
+      <div class="row">
+        <div style="max-width:110px"><label for="n">N <span class="text-slate-400 font-normal">(0 = empty)</span></label><input id="n" type="number" min="0" max="30" value="3"></div>
+        <div class="flex gap-2 !flex-none flex-wrap">
+          <button id="mk">Create Grid</button>
+          <button id="load" class="alt">Load Matrix</button>
+          <button id="sym" class="alt">Mirror ↙</button>
+        </div>
       </div>
-      <div id="fP" class="!max-w-[100px]"><label for="p">New bus p</label><input id="p" type="number"></div>
-      <div id="fJ" class="!max-w-[100px]"><label for="j">From bus j</label><input id="j" type="number" min="0" value="1"></div>
-      <div id="fK" class="!max-w-[100px]"><label for="k">To bus k</label><input id="k" type="number" min="0" value="0"></div>
-      <div id="fZ"><label for="z">Branch Impedance</label><input id="z" value="j0.2"></div>
-      <div id="fZo" class="hidden"><label for="zo">Old impedance</label><input id="zo" value="j0.2"></div>
-      <div id="fZn" class="hidden"><label for="zn">New impedance (blank = remove)</label><input id="zn"></div>
-      
-      <div class="flex gap-3 !flex-none w-full sm:w-auto mt-2">
-        <button id="apply" class="w-full sm:w-auto">Apply Change</button>
-        <button id="undo" class="alt w-full sm:w-auto">Undo Last</button>
-      </div>
-    </div>
-    <div class="note" id="hint"></div>
-    <div class="msg" id="m2"></div>
-  </section>
+      <div class="wrap"><table class="inp" id="inp"></table></div>
+      <div class="msg" id="m1"></div>
+    </section>
 
+    <!-- 2 -->
+    <section class="card">
+      <h2><span class="num">2</span>Topology modification</h2>
+      <div class="row items-end">
+        <div class="!max-w-none !basis-full">
+          <label for="type">Type of change</label>
+          <select id="type">
+            <option value="1">Type 1: New bus p → reference</option>
+            <option value="2">Type 2: New bus p → existing bus k</option>
+            <option value="3">Type 3: Existing bus k → reference</option>
+            <option value="4">Type 4: Existing bus j → existing bus k</option>
+            <option value="5">Type 5: Change / remove branch j–k</option>
+          </select>
+        </div>
+        <div id="fP" class="!max-w-[90px]"><label for="p">New bus p</label><input id="p" type="number"></div>
+        <div id="fJ" class="!max-w-[90px]"><label for="j">From j</label><input id="j" type="number" min="0" value="1"></div>
+        <div id="fK" class="!max-w-[90px]"><label for="k">To k</label><input id="k" type="number" min="0" value="0"></div>
+        <div id="fZ"><label for="z">Branch impedance</label><input id="z" value="j0.2"></div>
+        <div id="fZo" class="hidden"><label for="zo">Old impedance</label><input id="zo" value="j0.2"></div>
+        <div id="fZn" class="hidden"><label for="zn">New (blank = remove)</label><input id="zn"></div>
+        <div class="flex gap-2 !flex-none">
+          <button id="apply">Apply Change</button>
+          <button id="undo" class="alt">Undo</button>
+        </div>
+      </div>
+      <div class="note" id="hint"></div>
+      <div class="msg" id="m2"></div>
+    </section>
+  </div>
+
+  <!-- 3 -->
   <section class="card">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-5 gap-4">
-      <h2 class="!border-none !pb-0 !mb-0 flex items-center gap-3">
-        3. Current Impedance Matrix 
-        <span id="dim" class="bg-blue-100 text-blue-800 text-xs py-1 px-2 rounded font-mono"></span>
-      </h2>
-      <select id="fmt" class="w-auto !py-1.5 !text-sm border-slate-200">
-        <option value="rect">Format: a + jb</option>
-        <option value="polar">Format: magnitude ∠ angle</option>
+    <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 mb-3">
+      <h2 class="!border-none !pb-0 !mb-0"><span class="num">3</span>Current Z-bus <span id="dim" class="bg-blue-100 text-blue-800 text-xs py-0.5 px-2 rounded font-mono"></span></h2>
+      <select id="fmt" class="w-auto !py-1 !text-xs">
+        <option value="rect">a + jb</option>
+        <option value="polar">magnitude ∠ angle</option>
       </select>
     </div>
     <div class="wrap"><table class="out w-full" id="out"></table></div>
-    
-    <h3>Modification Log</h3>
+    <h3>Modification log</h3>
     <ol id="log"><li>No changes applied yet.</li></ol>
   </section>
 
+  <!-- 4 -->
   <section class="card">
-    <h2>4. Network Branch List & Admittance Matrix Inversion</h2>
-    <p class="q">Enter branches in the format: <code>from to Impedance [Electromotive Force]</code>. Use bus <code>0</code> for the reference. An optional fourth value <code>Electromotive Force</code> designates a source branch (Electromotive Force in per unit in series with Impedance), which is utilized solely for branch current calculations.</p>
-    <textarea id="br" rows="6" spellcheck="false" class="p-4 bg-slate-900 text-slate-100 border-none rounded-lg shadow-inner">1 0 0.6
+    <h2><span class="num">4</span>Branch list → Z-bus by Y-bus inversion</h2>
+    <p class="q">Format: <code>from to Z [EMF]</code>, one per line; bus <code>0</code> = reference. Optional EMF marks a source branch (used only for branch currents).</p>
+    <textarea id="br" rows="4" spellcheck="false" class="p-3 bg-slate-900 text-slate-100 border-none rounded-lg shadow-inner">1 0 0.6
 2 0 0.5
 2 3 0.5
 1 3 0.25</textarea>
-    <div class="row mt-4">
-      <button id="byb">Compute Impedance Matrix (Inverse of Admittance Matrix)</button>
-    </div>
+    <div class="mt-3"><button id="byb">Compute Z-bus = inv(Y-bus)</button></div>
     <div class="msg" id="m3"></div>
-    <div class="wrap mt-4"><table class="out" id="yb"></table></div>
+    <div class="wrap mt-2"><table class="out" id="yb"></table></div>
   </section>
 
-  <!-- Sequence Components Tools -->
+  <!-- 5 -->
   <section class="card">
-    <h2>5. Sequence Components (Fortescue), a = 1∠120°</h2>
-    <div class="flex flex-wrap gap-3 mb-6">
-      <button id="s1" class="alt text-xs">Preset: V = 110∠0, 88∠-100, 80∠175 (abc → 012)</button>
-      <button id="s2" class="alt text-xs">Preset: Balanced 100A (abc → 012)</button>
-      <button id="s3" class="alt text-xs">Preset: Ia0 = Ia1 = Ia2 = 10∠30° (012 → abc)</button>
+    <h2><span class="num">5</span>Sequence components (a = 1∠120°)</h2>
+    <div class="flex flex-wrap gap-2 mb-3">
+      <button id="s1" class="alt">Preset: 110∠0, 88∠−100, 80∠175</button>
+      <button id="s2" class="alt">Preset: balanced 100 A</button>
+      <button id="s3" class="alt">Preset: 012 = 10∠30°</button>
     </div>
-    <div class="row items-end bg-slate-50 p-5 rounded-lg border border-slate-200">
-      <div class="!max-w-[160px]">
-        <label for="sm">Conversion Direction</label>
-        <select id="sm">
-          <option value="abc">abc → 012</option>
-          <option value="seq">012 → abc</option>
-        </select>
-      </div>
+    <div class="row items-end bg-slate-50 p-3 rounded-lg border border-slate-200">
+      <div class="!max-w-[140px]"><label for="sm">Direction</label>
+        <select id="sm"><option value="abc">abc → 012</option><option value="seq">012 → abc</option></select></div>
       <div><label for="sx" id="lx">Va</label><input id="sx" value="110∠0"></div>
       <div><label for="sy" id="ly">Vb</label><input id="sy" value="88∠-100"></div>
       <div><label for="sz" id="lz">Vc</label><input id="sz" value="80∠175"></div>
-      <div class="!flex-none"><button id="sgo" class="w-full">Convert Components</button></div>
+      <div class="!flex-none"><button id="sgo">Convert</button></div>
     </div>
     <div class="msg" id="m5"></div>
-    <div id="sout" class="mt-4"></div>
-    
-    <div class="border-t border-slate-200 mt-8 pt-6">
-      <h3>Transposed Line Sequence Impedances</h3>
-      <div class="row items-end">
-        <div><label for="zs">Self Impedance</label><input id="zs" value="j0.5"></div>
-        <div><label for="zm">Mutual Impedance</label><input id="zm" value="j0.2"></div>
-        <div class="!flex-none"><button id="zgo" class="alt">Compute Zero, Positive, Negative Sequences</button></div>
-      </div>
-      <div id="zout" class="mt-4"></div>
-      <p class="note">Formulas: Zero Sequence = Self Impedance + 2 × Mutual Impedance, Positive Sequence = Negative Sequence = Self Impedance − Mutual Impedance. <br>Phase-shift rule for Delta–Star transformers: Positive sequence on the star (High Voltage) side leads the delta side by 30°; negative sequence lags by 30°.</p>
+    <div id="sout" class="mt-2"></div>
+    <h3>Transposed line sequence impedances</h3>
+    <div class="row items-end">
+      <div><label for="zs">Self Zs</label><input id="zs" value="j0.5"></div>
+      <div><label for="zm">Mutual Zm</label><input id="zm" value="j0.2"></div>
+      <div class="!flex-none"><button id="zgo" class="alt">Compute Z0, Z1, Z2</button></div>
     </div>
+    <div id="zout" class="mt-2"></div>
+    <p class="note">Z0 = Zs + 2Zm; Z1 = Z2 = Zs − Zm. Δ–Y transformer: positive sequence on the star side leads by 30°, negative lags by 30°.</p>
   </section>
 
-  <!-- Fault Analysis Tools -->
+  <!-- 6 -->
   <section class="card">
-    <h2>6. Three-Phase Fault (Using Current Impedance Matrix)</h2>
+    <h2><span class="num">6</span>Three-phase fault from current Z-bus</h2>
     <div class="row items-end">
-      <div class="!max-w-[120px]"><label for="fb">Fault bus (r)</label><input id="fb" type="number" min="1" value="1"></div>
-      <div><label for="fz">Fault Impedance</label><input id="fz" value="0"></div>
+      <div class="!max-w-[110px]"><label for="fb">Fault bus r</label><input id="fb" type="number" min="1" value="1"></div>
+      <div><label for="fz">Fault impedance</label><input id="fz" value="0"></div>
       <div><label for="fv">Prefault voltage</label><input id="fv" value="1"></div>
-      <div class="!flex-none"><button id="fgo">Compute Three-Phase Fault</button></div>
+      <div class="!flex-none"><button id="fgo">Compute</button></div>
     </div>
     <div class="msg" id="m4"></div>
-    <div id="fout" class="mt-4"></div>
-    <p class="note">Fault Current = Prefault Voltage / (Diagonal Impedance + Fault Impedance)  •  Voltage at bus i = Prefault Voltage − Transfer Impedance × Fault Current  •  Branch currents use the branch list defined in section 4. Prefault currents are assumed zero.</p>
+    <div id="fout" class="mt-2"></div>
+    <p class="note">If = Vf / (Zrr + Zf); Vi = Vf − Zir·If. Branch currents use the list in section 4; prefault currents assumed zero.</p>
   </section>
 
+  <!-- 7 -->
   <section class="card">
-    <h2>7. Thevenin Equivalent Fault Solver</h2>
-    <p class="q">Enter the Thevenin sequence impedances seen from the fault point in per unit. Phase <i>a</i> is the reference. Line-to-Line is between <i>b</i> and <i>c</i>. Line-to-Line-to-Ground is <i>b–c–ground</i>.</p>
-    <div class="row items-end bg-slate-50 p-5 rounded-lg border border-slate-200">
-      <div class="!max-w-[180px]">
-        <label for="ft">Fault Classification</label>
-        <select id="ft">
-          <option value="LG">Single Line-to-Ground</option>
-          <option value="LL">Line-to-Line</option>
-          <option value="LLG">Double Line-to-Ground</option>
-          <option value="LLL">Three-Phase</option>
-        </select>
-      </div>
-      <div class="!max-w-[100px]"><label for="gV">Prefault Voltage</label><input id="gV" value="1"></div>
-      <div><label for="g1">Positive Sequence</label><input id="g1" value="j0.157"></div>
-      <div><label for="g2">Negative Sequence</label><input id="g2" value="j0.157"></div>
-      <div><label for="g0">Zero Sequence</label><input id="g0" value="j0.051"></div>
-      <div class="!max-w-[100px]"><label for="gf">Fault Impedance</label><input id="gf" value="0"></div>
-      <div class="!max-w-[120px]"><label for="gS">Base Megavolt-Amperes</label><input id="gS" value="250"></div>
-      <div class="!max-w-[120px]"><label for="gk">Base Kilovolts (Line-to-Line)</label><input id="gk" value="220"></div>
-      <div class="!flex-none w-full sm:w-auto"><button id="ggo" class="w-full">Solve Fault</button></div>
+    <h2><span class="num">7</span>Thevenin sequence fault solver</h2>
+    <p class="q">Enter sequence impedances seen from the fault point (pu). Phase a is reference; L–L is b–c; L–L–G is b–c–ground.</p>
+    <div class="row items-end bg-slate-50 p-3 rounded-lg border border-slate-200">
+      <div class="!max-w-[170px]"><label for="ft">Fault type</label>
+        <select id="ft"><option value="LG">Line-to-Ground</option><option value="LL">Line-to-Line</option><option value="LLG">Double Line-to-Ground</option><option value="LLL">Three-Phase</option></select></div>
+      <div class="!max-w-[90px]"><label for="gV">Vprefault</label><input id="gV" value="1"></div>
+      <div><label for="g1">Z1</label><input id="g1" value="j0.157"></div>
+      <div><label for="g2">Z2</label><input id="g2" value="j0.157"></div>
+      <div><label for="g0">Z0</label><input id="g0" value="j0.051"></div>
+      <div class="!max-w-[90px]"><label for="gf">Zf</label><input id="gf" value="0"></div>
+      <div class="!max-w-[100px]"><label for="gS">Base MVA</label><input id="gS" value="250"></div>
+      <div class="!max-w-[100px]"><label for="gk">Base kV (L–L)</label><input id="gk" value="220"></div>
+      <div class="!flex-none"><button id="ggo">Solve</button></div>
     </div>
     <div class="msg" id="m6"></div>
-    <div id="gout" class="mt-4"></div>
+    <div id="gout" class="mt-2"></div>
   </section>
 </div>
-
 <!-- ============ TAB 2: SOLVED QUESTIONS (Z-bus related only) ============ -->
 <div id="t2" class="tab-body hidden flex-col gap-6 w-full">
 
